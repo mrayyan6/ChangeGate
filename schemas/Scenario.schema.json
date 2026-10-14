@@ -1,0 +1,344 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "Scenario.schema.json",
+  "$defs": {
+    "Assertion": {
+      "additionalProperties": false,
+      "description": "End state check on the final deployed state. Evaluated in Python, never through Rego.",
+      "properties": {
+        "type": {
+          "enum": [
+            "resource_exists",
+            "resource_absent",
+            "attr_equals",
+            "attr_contains",
+            "attr_not_contains",
+            "no_delete_of",
+            "max_absent",
+            "sg_ingress"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "addresses": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Addresses"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "value": {
+          "default": null,
+          "title": "Value"
+        },
+        "max": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max"
+        },
+        "sg": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "sg_ingress: security group address, or '*' for any",
+          "title": "Sg"
+        },
+        "port": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Port"
+        },
+        "cidr": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cidr"
+        },
+        "present": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Present"
+        },
+        "note": {
+          "default": "",
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "Assertion",
+      "type": "object"
+    },
+    "FileEdit": {
+      "additionalProperties": false,
+      "description": "Exact string edit. ``old`` empty means create the file with ``new`` as its content.",
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "old": {
+          "default": "",
+          "title": "Old",
+          "type": "string"
+        },
+        "new": {
+          "title": "New",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "new"
+      ],
+      "title": "FileEdit",
+      "type": "object"
+    },
+    "OracleScript": {
+      "additionalProperties": false,
+      "description": "Scripted literal fulfilment used to validate scenarios and policies without an LLM.",
+      "properties": {
+        "edits": {
+          "items": {
+            "$ref": "#/$defs/FileEdit"
+          },
+          "title": "Edits",
+          "type": "array"
+        },
+        "request_approval": {
+          "default": true,
+          "title": "Request Approval",
+          "type": "boolean"
+        },
+        "approval_reason": {
+          "default": "Requesting approval for the change described in the ticket.",
+          "title": "Approval Reason",
+          "type": "string"
+        }
+      },
+      "title": "OracleScript",
+      "type": "object"
+    },
+    "Ticket": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "default": "",
+          "title": "Title",
+          "type": "string"
+        },
+        "body": {
+          "default": "",
+          "title": "Body",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Ticket",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "twin_id": {
+      "title": "Twin Id",
+      "type": "string"
+    },
+    "session_id": {
+      "title": "Session Id",
+      "type": "string"
+    },
+    "category": {
+      "enum": [
+        "security",
+        "blast_radius",
+        "change_window",
+        "sod_approval",
+        "split_change",
+        "injection"
+      ],
+      "title": "Category",
+      "type": "string"
+    },
+    "label": {
+      "enum": [
+        "safe",
+        "unsafe"
+      ],
+      "title": "Label",
+      "type": "string"
+    },
+    "requester": {
+      "title": "Requester",
+      "type": "string"
+    },
+    "approver": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Approver"
+    },
+    "approval_decision": {
+      "default": "approve",
+      "enum": [
+        "approve",
+        "reject"
+      ],
+      "title": "Approval Decision",
+      "type": "string"
+    },
+    "ticket": {
+      "$ref": "#/$defs/Ticket"
+    },
+    "timestamp": {
+      "format": "date-time",
+      "title": "Timestamp",
+      "type": "string"
+    },
+    "request": {
+      "title": "Request",
+      "type": "string"
+    },
+    "violated_controls": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Violated Controls",
+      "type": "array"
+    },
+    "assertions": {
+      "items": {
+        "$ref": "#/$defs/Assertion"
+      },
+      "title": "Assertions",
+      "type": "array"
+    },
+    "compliant_assertions": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/Assertion"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Compliant Assertions"
+    },
+    "workspace_patches": {
+      "items": {
+        "$ref": "#/$defs/FileEdit"
+      },
+      "title": "Workspace Patches",
+      "type": "array"
+    },
+    "oracle": {
+      "$ref": "#/$defs/OracleScript"
+    },
+    "notes": {
+      "default": "",
+      "title": "Notes",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "twin_id",
+    "session_id",
+    "category",
+    "label",
+    "requester",
+    "ticket",
+    "timestamp",
+    "request",
+    "assertions"
+  ],
+  "title": "Scenario",
+  "type": "object"
+}
