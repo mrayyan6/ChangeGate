@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
 import statistics
 import subprocess
 import time
@@ -136,8 +137,12 @@ class ArmRunner:
         results: list[RunResult] = []
         try:
             for session_id, members in group_sessions(scenarios):
+                # A session always starts from the pristine env and an empty session record.
                 dest = self.work_dir / slug(session_id)
-                ws = Workspace.open_or_create(
+                if dest.exists():
+                    shutil.rmtree(dest)
+                self.store.reset_session(session_id)
+                ws = Workspace.create(
                     self.cfg.path(self.cfg.terraform.env_dir), dest, self.terraform, members[0].workspace_patches
                 )
                 for sc in members:

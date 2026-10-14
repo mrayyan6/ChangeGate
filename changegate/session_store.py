@@ -183,6 +183,12 @@ class SessionStore:
         with self._write() as db:
             _ensure(db, session_id)
 
+    def reset_session(self, session_id: str) -> None:
+        """Forget everything recorded for the session (used when a session is run again)."""
+        with self._write() as db:
+            for table in ("requests", "applies", "approvals"):
+                db.execute(f"DELETE FROM {table} WHERE session_id = ?", (session_id,))
+
     def record_request(self, session_id: str, request_id: str) -> None:
         """Count ``request_id`` as seen in the session. Recording it again changes nothing."""
         with self._write() as db:

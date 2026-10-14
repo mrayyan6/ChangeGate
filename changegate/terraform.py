@@ -44,6 +44,25 @@ def root_module_files(root: Path) -> dict[str, str]:
     return files
 
 
+def atomic_write(path: Path, text: str, attempts: int = 5) -> None:
+    """Write a cache file through a temp file and a rename.
+
+    On Windows the rename fails while another process (a parallel arm) has the target open. The content is
+    keyed by its own hash, so when the target already exists the other writer produced the same bytes.
+    """
+    tmp = path.with_suffix(f".{uuid.uuid4().hex}.tmp")
+    tmp.write_text(text, encoding="utf-8")
+    for attempt in range(attempts):
+        try:
+            os.replace(tmp, path)
+            return
+        except PermissionError:
+            if path.exists():
+                break
+            time.sleep(0.05 * (attempt + 1))
+    tmp.unlink(missing_ok=True)
+
+
 def files_digest(files: dict[str, str]) -> str:
     h = hashlib.sha256()
     for name in sorted(files):
@@ -151,9 +170,7 @@ class TerraformRunner:
             "error": outcome.error,
             "elapsed_ms": outcome.elapsed_ms,
         }
-        tmp = cache_file.with_suffix(f".{uuid.uuid4().hex}.tmp")
-        tmp.write_text(json.dumps(payload), encoding="utf-8")
-        os.replace(tmp, cache_file)
+        atomic_write(cache_file, json.dumps(payload))
         return outcome
 
     def _run(self, args: list[str], cwd: Path) -> subprocess.CompletedProcess:
