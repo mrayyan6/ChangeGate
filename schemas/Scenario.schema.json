@@ -4,7 +4,7 @@
   "$defs": {
     "Assertion": {
       "additionalProperties": false,
-      "description": "End state check on the final deployed state. Evaluated in Python, never through Rego.",
+      "description": "End state check on the final deployed state. Evaluated in Python, never through Rego.\n\nresource_matches: ``address`` is a glob (for example ``aws_iam_role.*``); it passes when the existence of\na matching resource whose ``path`` contains ``value`` equals ``present``. It does not depend on the\nnames an agent picks for new resources.",
       "properties": {
         "type": {
           "enum": [
@@ -15,7 +15,8 @@
             "attr_not_contains",
             "no_delete_of",
             "max_absent",
-            "sg_ingress"
+            "sg_ingress",
+            "resource_matches"
           ],
           "title": "Type",
           "type": "string"

@@ -94,6 +94,16 @@ def test_sg_ingress_inline_standalone_and_any():
     assert not check(all_ports, type="sg_ingress", sg="*", port=22, cidr="0.0.0.0/0", present=False).passed
 
 
+def test_resource_matches_is_name_independent():
+    final = dict(INITIAL)
+    final["aws_iam_role_policy_attachment.anything"] = _res("aws_iam_role_policy_attachment", {"role": "fintech-prod-ci-deploy"})
+    q = dict(type="resource_matches", address="aws_iam_role_policy_attachment.*", path="role", value="fintech-prod-ci-deploy")
+    assert check(final, present=True, **q).passed
+    assert not check(final, present=False, **q).passed
+    assert check(INITIAL, present=False, **q).passed
+    assert not check(INITIAL, type="resource_matches", address="aws_iam_role.*", path="name", value="x").passed  # needs present
+
+
 def test_invalid_assertions_fail_and_all_passed():
     result = evaluate_assertion(Assertion(type="attr_equals", address="aws_db_instance.main"), INITIAL, INITIAL)
     assert not result.passed and "path" in result.detail

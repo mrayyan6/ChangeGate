@@ -331,10 +331,28 @@ def _check_sg_ingress(a: Assertion, final: State, initial: State) -> tuple[bool,
     return True, f"No {query} exists, as required."
 
 
+def _check_resource_matches(a: Assertion, final: State, initial: State) -> tuple[bool, str]:
+    """Is there a resource matching the address glob whose path contains the value? Compare with present."""
+    hits = [
+        address
+        for address in _matching(final, [a.address])
+        if _has(flatten(resolve_path(final[address].get("values") or {}, a.path or "")), a.value)
+    ]
+    query = f"a resource matching {a.address} with {a.path} = {_show(a.value)}"
+    if hits:
+        if a.present:
+            return True, f"Found {query}: {_names(hits)}."
+        return False, f"Found {query} ({_names(hits)}), but it must be absent."
+    if a.present:
+        return False, f"No {query} exists in the final state."
+    return True, f"No {query} exists, as required."
+
+
 # Public API
 
 
 _CHECKS: dict[str, Check] = {
+    "resource_matches": _check_resource_matches,
     "resource_exists": _check_exists,
     "resource_absent": _check_absent,
     "attr_equals": _check_equals,
@@ -362,6 +380,11 @@ def _problem(a: Assertion) -> str | None:
     if a.type == "sg_ingress":
         if not a.sg:
             return "sg (a security group address or *)"
+        if a.present is None:
+            return "present (true or false)"
+    if a.type == "resource_matches":
+        if not a.address or not a.path:
+            return "address (a glob) and path"
         if a.present is None:
             return "present (true or false)"
     return None
