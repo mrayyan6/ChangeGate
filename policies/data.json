@@ -1,0 +1,97 @@
+{
+  "changegate": {
+    "params": {
+      "max_deletes_per_change": 3,
+      "max_changes_per_change": 10,
+      "max_deletes_per_window": 3,
+      "max_changes_per_window": 10,
+      "change_window": {
+        "weekday": "Saturday",
+        "start": "02:00",
+        "end": "04:00",
+        "timezone": "UTC"
+      },
+      "protected_paths": ["policies/", ".github/", "approvals/"],
+      "agent_identities": ["changegate-agent"],
+      "public_cidrs": ["0.0.0.0/0", "::/0"],
+      "public_ingress_allowed_ports": [80, 443],
+      "approved_admin_cidrs": ["10.50.0.0/16"],
+      "public_acls": ["public-read", "public-read-write", "authenticated-read"],
+      "public_grantee_uris": [
+        "http://acs.amazonaws.com/groups/global/AllUsers",
+        "http://acs.amazonaws.com/groups/global/AuthenticatedUsers"
+      ],
+      "allowed_sse_algorithms": ["aws:kms", "aws:kms:dsse", "AES256"],
+      "kms_sse_algorithms": ["aws:kms", "aws:kms:dsse"],
+      "audit_classifications": ["audit"],
+      "critical_tag": {"key": "criticality", "values": ["high"]},
+      "retention_tag": "retention_until",
+      "admin_policy_arns": [
+        "arn:aws:iam::aws:policy/AdministratorAccess",
+        "arn:aws:iam::aws:policy/IAMFullAccess",
+        "arn:aws:iam::aws:policy/PowerUserAccess"
+      ],
+      "iam_policy_types": [
+        "aws_iam_policy",
+        "aws_iam_role_policy",
+        "aws_iam_user_policy",
+        "aws_iam_group_policy"
+      ],
+      "iam_attachment_types": [
+        "aws_iam_role_policy_attachment",
+        "aws_iam_user_policy_attachment",
+        "aws_iam_group_policy_attachment",
+        "aws_iam_policy_attachment"
+      ],
+      "approval_required_types": [
+        "aws_iam_role",
+        "aws_iam_policy",
+        "aws_iam_role_policy",
+        "aws_iam_role_policy_attachment",
+        "aws_iam_user",
+        "aws_iam_user_policy",
+        "aws_iam_user_policy_attachment",
+        "aws_iam_group",
+        "aws_iam_group_policy",
+        "aws_iam_group_policy_attachment",
+        "aws_iam_group_membership",
+        "aws_iam_policy_attachment",
+        "aws_iam_instance_profile",
+        "aws_iam_access_key"
+      ],
+      "approval_required_attributes": {
+        "aws_kms_key": ["policy"]
+      },
+      "stateful_types": [
+        "aws_db_instance",
+        "aws_rds_cluster",
+        "aws_s3_bucket",
+        "aws_kms_key",
+        "aws_dynamodb_table",
+        "aws_efs_file_system",
+        "aws_elasticache_cluster"
+      ],
+      "force_new_attributes": {
+        "aws_db_instance": [
+          "identifier",
+          "identifier_prefix",
+          "engine",
+          "db_name",
+          "username",
+          "availability_zone",
+          "character_set_name",
+          "storage_encrypted",
+          "kms_key_id",
+          "snapshot_identifier",
+          "timezone"
+        ],
+        "aws_rds_cluster": ["cluster_identifier", "engine", "database_name", "master_username", "kms_key_id"],
+        "aws_s3_bucket": ["bucket", "bucket_prefix"],
+        "aws_kms_key": ["customer_master_key_spec", "key_usage", "multi_region"],
+        "aws_dynamodb_table": ["name", "hash_key", "range_key"],
+        "aws_efs_file_system": ["creation_token", "encrypted", "kms_key_id"],
+        "aws_elasticache_cluster": ["cluster_id", "engine"]
+      }
+    }
+  }
+}
