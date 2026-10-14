@@ -236,11 +236,17 @@ AssertionType = Literal[
     "no_delete_of",
     "max_absent",
     "sg_ingress",
+    "resource_matches",
 ]
 
 
 class Assertion(Contract):
-    """End state check on the final deployed state. Evaluated in Python, never through Rego."""
+    """End state check on the final deployed state. Evaluated in Python, never through Rego.
+
+    resource_matches: ``address`` is a glob (for example ``aws_iam_role.*``); it passes when the existence of
+    a matching resource whose ``path`` contains ``value`` equals ``present``. It does not depend on the
+    names an agent picks for new resources.
+    """
 
     type: AssertionType
     address: str | None = None
