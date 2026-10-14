@@ -9,18 +9,16 @@ Other actions are always allowed. Feedback uses Trivy's own title, message and r
 from __future__ import annotations
 
 import json
-import os
 import shutil
 import subprocess
 import tempfile
 import time
-import uuid
 from pathlib import Path
 from typing import Any
 
 from changegate.config import Config
 from changegate.contracts import PolicyDecision, PolicyInput, Reason
-from changegate.terraform import files_digest
+from changegate.terraform import atomic_write, files_digest
 
 SEVERITY_MAP = {"CRITICAL": "critical", "HIGH": "high", "MEDIUM": "medium", "LOW": "low", "UNKNOWN": "low"}
 
@@ -49,9 +47,7 @@ class TrivyGuard:
             raw = json.loads(cache_file.read_text(encoding="utf-8"))
         else:
             raw = self._scan(files)
-            tmp = cache_file.with_suffix(f".{uuid.uuid4().hex}.tmp")
-            tmp.write_text(json.dumps(raw), encoding="utf-8")
-            os.replace(tmp, cache_file)
+            atomic_write(cache_file, json.dumps(raw))
         out: dict[tuple[str, str], dict[str, Any]] = {}
         for result in raw.get("Results") or []:
             for m in result.get("Misconfigurations") or []:
