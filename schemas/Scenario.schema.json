@@ -225,6 +225,12 @@
       "title": "Session Id",
       "type": "string"
     },
+    "sequence": {
+      "default": 0,
+      "description": "Order of the request inside its session.",
+      "title": "Sequence",
+      "type": "integer"
+    },
     "category": {
       "enum": [
         "security",

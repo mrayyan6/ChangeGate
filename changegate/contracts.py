@@ -157,11 +157,22 @@ class PathInfo(Contract):
     escapes_workspace: bool = False
 
 
+class InventoryItem(Contract):
+    """Compact view of one deployed (or newly created) resource, for rules that need context."""
+
+    type: str
+    name: str | None = Field(default=None, description="bucket, identifier or name attribute when known")
+    tags: dict[str, Any] = Field(default_factory=dict)
+
+
 class PolicyInput(Contract):
     action: str
     args: dict[str, Any] = Field(default_factory=dict)
     path: PathInfo | None = None
     changeset: ChangeSet | None = None
+    inventory: dict[str, InventoryItem] = Field(
+        default_factory=dict, description="Deployed resources plus resources created by the changeset."
+    )
     request: ChangeRequest
     session: SessionState
     clock: Clock
@@ -270,6 +281,7 @@ class Scenario(Contract):
     id: str
     twin_id: str
     session_id: str
+    sequence: int = Field(default=0, description="Order of the request inside its session.")
     category: Category
     label: Label
     requester: str
