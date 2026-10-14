@@ -1,0 +1,4 @@
+# Keep LF on every platform so file hashes, plan caches and exact-match edits are stable.
+* text=auto eol=lf
+*.png binary
+*.sqlite binary

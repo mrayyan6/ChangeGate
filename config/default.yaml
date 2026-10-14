@@ -1,0 +1,59 @@
+# ChangeGate default configuration. Paths are relative to the repo root.
+# Secrets never live here: API keys are read from .env (see .env.example).
+
+run:
+  seed: 7
+  max_steps: 20            # tool calls per request before the run is cut off
+  work_dir: work
+  results_dir: results
+  scenarios_dir: scenarios/phase1
+
+llm:
+  provider: ollama         # ollama | gemini
+  temperature: 0.0         # Google recommends 1.0 for Gemini 3 models; the brief asks for 0
+  cache_path: .cache/llm_cache.sqlite
+  request_timeout_s: 300
+  ollama:
+    model: llama3.1:8b
+    base_url: http://localhost:11434
+    num_ctx: 16384
+  gemini:
+    model: gemini-3.8-flash     # current stable Flash id per ai.google.dev, checked 2026-10-13
+    api_key_env: GEMINI_API_KEY
+  # USD per million tokens, used for cost estimates only.
+  prices:
+    llama3.1:8b: {input: 0.0, output: 0.0}
+    llama3.2:3b: {input: 0.0, output: 0.0}
+
+terraform:
+  binary: terraform
+  env_dir: envs/fintech
+  data_dir: envs/fintech/.terraform
+  plugin_cache_dir: .terraform-plugin-cache
+  plan_cache_dir: .cache/plans
+  timeout_s: 240
+
+opa:
+  binary: opa
+  mode: eval               # eval runs `opa eval` per decision; server talks to `opa run --server`
+  policy_dir: policies
+  query: data.changegate.main.decision
+  server_url: http://127.0.0.1:8181
+  timeout_s: 30
+
+trivy:
+  binary: trivy
+  severities: [HIGH, CRITICAL]
+  timeout_s: 180
+
+agent:
+  id: changegate-agent
+
+# Arms used in the experiments. guard: none | trivy | opa | agentspec
+arms:
+  B0: {guard: none, feedback: none}
+  B2: {guard: trivy, feedback: reason}
+  P: {guard: opa, feedback: hint}
+  P-bare: {guard: opa, feedback: bare}
+  P-reason: {guard: opa, feedback: reason}
+  B1: {guard: agentspec, feedback: native}
