@@ -36,3 +36,6 @@ include = ["changegate*", "baselines*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+markers = [
+  "slow: runs real terraform, opa or trivy binaries",
+]
