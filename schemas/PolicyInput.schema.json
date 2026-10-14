@@ -1,0 +1,516 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "PolicyInput.schema.json",
+  "$defs": {
+    "AgentIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "default": "changegate-agent",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "title": "AgentIdentity",
+      "type": "object"
+    },
+    "Approval": {
+      "additionalProperties": false,
+      "properties": {
+        "approval_id": {
+          "title": "Approval Id",
+          "type": "string"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        },
+        "ticket_id": {
+          "title": "Ticket Id",
+          "type": "string"
+        },
+        "requester": {
+          "title": "Requester",
+          "type": "string"
+        },
+        "approver": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Approver"
+        },
+        "granted": {
+          "title": "Granted",
+          "type": "boolean"
+        },
+        "reason": {
+          "default": "",
+          "title": "Reason",
+          "type": "string"
+        },
+        "detail": {
+          "default": "",
+          "title": "Detail",
+          "type": "string"
+        },
+        "changeset_digest": {
+          "title": "Changeset Digest",
+          "type": "string"
+        },
+        "timestamp": {
+          "format": "date-time",
+          "title": "Timestamp",
+          "type": "string"
+        }
+      },
+      "required": [
+        "approval_id",
+        "request_id",
+        "ticket_id",
+        "requester",
+        "granted",
+        "changeset_digest",
+        "timestamp"
+      ],
+      "title": "Approval",
+      "type": "object"
+    },
+    "ChangeRequest": {
+      "additionalProperties": false,
+      "description": "What the agent and the gate are allowed to know about a request.",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "session_id": {
+          "title": "Session Id",
+          "type": "string"
+        },
+        "requester": {
+          "title": "Requester",
+          "type": "string"
+        },
+        "approver": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Approver"
+        },
+        "ticket": {
+          "$ref": "#/$defs/Ticket"
+        },
+        "timestamp": {
+          "description": "Simulated clock for this request (UTC).",
+          "format": "date-time",
+          "title": "Timestamp",
+          "type": "string"
+        },
+        "text": {
+          "description": "The change request text handed to the agent.",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "session_id",
+        "requester",
+        "ticket",
+        "timestamp",
+        "text"
+      ],
+      "title": "ChangeRequest",
+      "type": "object"
+    },
+    "ChangeSet": {
+      "additionalProperties": false,
+      "description": "Normalized difference between the deployed state and the proposed configuration.",
+      "properties": {
+        "source": {
+          "enum": [
+            "plan",
+            "hcl_fallback"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "fallback_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fallback Reason"
+        },
+        "changes": {
+          "items": {
+            "$ref": "#/$defs/ResourceChange"
+          },
+          "title": "Changes",
+          "type": "array"
+        },
+        "summary": {
+          "$ref": "#/$defs/ChangeSummary"
+        },
+        "base_digest": {
+          "description": "SHA-256 of the deployed state the diff starts from.",
+          "title": "Base Digest",
+          "type": "string"
+        },
+        "target_digest": {
+          "description": "SHA-256 of the proposed state.",
+          "title": "Target Digest",
+          "type": "string"
+        },
+        "digest": {
+          "description": "SHA-256 of the normalized changes; approvals bind to this.",
+          "title": "Digest",
+          "type": "string"
+        },
+        "plan_ms": {
+          "default": 0.0,
+          "title": "Plan Ms",
+          "type": "number"
+        },
+        "plan_cached": {
+          "default": false,
+          "title": "Plan Cached",
+          "type": "boolean"
+        },
+        "errors": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Errors",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source",
+        "base_digest",
+        "target_digest",
+        "digest"
+      ],
+      "title": "ChangeSet",
+      "type": "object"
+    },
+    "ChangeSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "create": {
+          "default": 0,
+          "title": "Create",
+          "type": "integer"
+        },
+        "update": {
+          "default": 0,
+          "title": "Update",
+          "type": "integer"
+        },
+        "delete": {
+          "default": 0,
+          "title": "Delete",
+          "type": "integer"
+        }
+      },
+      "title": "ChangeSummary",
+      "type": "object"
+    },
+    "Clock": {
+      "additionalProperties": false,
+      "properties": {
+        "now": {
+          "description": "Simulated time, fixed for the whole request.",
+          "format": "date-time",
+          "title": "Now",
+          "type": "string"
+        }
+      },
+      "required": [
+        "now"
+      ],
+      "title": "Clock",
+      "type": "object"
+    },
+    "PathInfo": {
+      "additionalProperties": false,
+      "description": "Normalized target path for file actions, computed by the PEP from the raw argument.",
+      "properties": {
+        "raw": {
+          "title": "Raw",
+          "type": "string"
+        },
+        "normalized": {
+          "title": "Normalized",
+          "type": "string"
+        },
+        "escapes_workspace": {
+          "default": false,
+          "title": "Escapes Workspace",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "raw",
+        "normalized"
+      ],
+      "title": "PathInfo",
+      "type": "object"
+    },
+    "ResourceChange": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "title": "Address",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "create",
+            "update",
+            "delete"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "changed_attributes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Changed Attributes",
+          "type": "array"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "unknown_after": {
+          "description": "Top level attributes that are only known after apply.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Unknown After",
+          "type": "array"
+        },
+        "references": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "description": "Attribute name to the resource addresses it references.",
+          "title": "References",
+          "type": "object"
+        }
+      },
+      "required": [
+        "address",
+        "type",
+        "name",
+        "action"
+      ],
+      "title": "ResourceChange",
+      "type": "object"
+    },
+    "SessionState": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "title": "Session Id",
+          "type": "string"
+        },
+        "window_id": {
+          "title": "Window Id",
+          "type": "string"
+        },
+        "window_totals": {
+          "$ref": "#/$defs/WindowTotals"
+        },
+        "approvals": {
+          "items": {
+            "$ref": "#/$defs/Approval"
+          },
+          "title": "Approvals",
+          "type": "array"
+        },
+        "requests_seen": {
+          "default": 0,
+          "title": "Requests Seen",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "session_id",
+        "window_id",
+        "window_totals"
+      ],
+      "title": "SessionState",
+      "type": "object"
+    },
+    "Ticket": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "default": "",
+          "title": "Title",
+          "type": "string"
+        },
+        "body": {
+          "default": "",
+          "title": "Body",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Ticket",
+      "type": "object"
+    },
+    "WindowTotals": {
+      "additionalProperties": false,
+      "properties": {
+        "window_id": {
+          "title": "Window Id",
+          "type": "string"
+        },
+        "creates": {
+          "default": 0,
+          "title": "Creates",
+          "type": "integer"
+        },
+        "updates": {
+          "default": 0,
+          "title": "Updates",
+          "type": "integer"
+        },
+        "deletes": {
+          "default": 0,
+          "title": "Deletes",
+          "type": "integer"
+        },
+        "changes": {
+          "default": 0,
+          "title": "Changes",
+          "type": "integer"
+        },
+        "applies": {
+          "default": 0,
+          "title": "Applies",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "window_id"
+      ],
+      "title": "WindowTotals",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "title": "Action",
+      "type": "string"
+    },
+    "args": {
+      "additionalProperties": true,
+      "title": "Args",
+      "type": "object"
+    },
+    "path": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PathInfo"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "changeset": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ChangeSet"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "request": {
+      "$ref": "#/$defs/ChangeRequest"
+    },
+    "session": {
+      "$ref": "#/$defs/SessionState"
+    },
+    "clock": {
+      "$ref": "#/$defs/Clock"
+    },
+    "agent": {
+      "$ref": "#/$defs/AgentIdentity"
+    }
+  },
+  "required": [
+    "action",
+    "request",
+    "session",
+    "clock"
+  ],
+  "title": "PolicyInput",
+  "type": "object"
+}

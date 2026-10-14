@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ChangeSet.schema.json",
+  "$defs": {
+    "ChangeSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "create": {
+          "default": 0,
+          "title": "Create",
+          "type": "integer"
+        },
+        "update": {
+          "default": 0,
+          "title": "Update",
+          "type": "integer"
+        },
+        "delete": {
+          "default": 0,
+          "title": "Delete",
+          "type": "integer"
+        }
+      },
+      "title": "ChangeSummary",
+      "type": "object"
+    },
+    "ResourceChange": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "title": "Address",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "create",
+            "update",
+            "delete"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "changed_attributes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Changed Attributes",
+          "type": "array"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "unknown_after": {
+          "description": "Top level attributes that are only known after apply.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Unknown After",
+          "type": "array"
+        },
+        "references": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "description": "Attribute name to the resource addresses it references.",
+          "title": "References",
+          "type": "object"
+        }
+      },
+      "required": [
+        "address",
+        "type",
+        "name",
+        "action"
+      ],
+      "title": "ResourceChange",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Normalized difference between the deployed state and the proposed configuration.",
+  "properties": {
+    "source": {
+      "enum": [
+        "plan",
+        "hcl_fallback"
+      ],
+      "title": "Source",
+      "type": "string"
+    },
+    "fallback_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Fallback Reason"
+    },
+    "changes": {
+      "items": {
+        "$ref": "#/$defs/ResourceChange"
+      },
+      "title": "Changes",
+      "type": "array"
+    },
+    "summary": {
+      "$ref": "#/$defs/ChangeSummary"
+    },
+    "base_digest": {
+      "description": "SHA-256 of the deployed state the diff starts from.",
+      "title": "Base Digest",
+      "type": "string"
+    },
+    "target_digest": {
+      "description": "SHA-256 of the proposed state.",
+      "title": "Target Digest",
+      "type": "string"
+    },
+    "digest": {
+      "description": "SHA-256 of the normalized changes; approvals bind to this.",
+      "title": "Digest",
+      "type": "string"
+    },
+    "plan_ms": {
+      "default": 0.0,
+      "title": "Plan Ms",
+      "type": "number"
+    },
+    "plan_cached": {
+      "default": false,
+      "title": "Plan Cached",
+      "type": "boolean"
+    },
+    "errors": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "source",
+    "base_digest",
+    "target_digest",
+    "digest"
+  ],
+  "title": "ChangeSet",
+  "type": "object"
+}

@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ChangeRequest.schema.json",
+  "$defs": {
+    "Ticket": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "default": "",
+          "title": "Title",
+          "type": "string"
+        },
+        "body": {
+          "default": "",
+          "title": "Body",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Ticket",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "What the agent and the gate are allowed to know about a request.",
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "session_id": {
+      "title": "Session Id",
+      "type": "string"
+    },
+    "requester": {
+      "title": "Requester",
+      "type": "string"
+    },
+    "approver": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Approver"
+    },
+    "ticket": {
+      "$ref": "#/$defs/Ticket"
+    },
+    "timestamp": {
+      "description": "Simulated clock for this request (UTC).",
+      "format": "date-time",
+      "title": "Timestamp",
+      "type": "string"
+    },
+    "text": {
+      "description": "The change request text handed to the agent.",
+      "title": "Text",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "session_id",
+    "requester",
+    "ticket",
+    "timestamp",
+    "text"
+  ],
+  "title": "ChangeRequest",
+  "type": "object"
+}

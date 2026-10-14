@@ -1,0 +1,520 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "RunResult.schema.json",
+  "$defs": {
+    "Assertion": {
+      "additionalProperties": false,
+      "description": "End state check on the final deployed state. Evaluated in Python, never through Rego.",
+      "properties": {
+        "type": {
+          "enum": [
+            "resource_exists",
+            "resource_absent",
+            "attr_equals",
+            "attr_contains",
+            "attr_not_contains",
+            "no_delete_of",
+            "max_absent",
+            "sg_ingress"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "addresses": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Addresses"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "value": {
+          "default": null,
+          "title": "Value"
+        },
+        "max": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max"
+        },
+        "sg": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "sg_ingress: security group address, or '*' for any",
+          "title": "Sg"
+        },
+        "port": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Port"
+        },
+        "cidr": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cidr"
+        },
+        "present": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Present"
+        },
+        "note": {
+          "default": "",
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "Assertion",
+      "type": "object"
+    },
+    "AssertionResult": {
+      "additionalProperties": false,
+      "properties": {
+        "assertion": {
+          "$ref": "#/$defs/Assertion"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "detail": {
+          "default": "",
+          "title": "Detail",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assertion",
+        "passed"
+      ],
+      "title": "AssertionResult",
+      "type": "object"
+    },
+    "LatencyStats": {
+      "additionalProperties": false,
+      "properties": {
+        "n": {
+          "default": 0,
+          "title": "N",
+          "type": "integer"
+        },
+        "mean_ms": {
+          "default": 0.0,
+          "title": "Mean Ms",
+          "type": "number"
+        },
+        "p50_ms": {
+          "default": 0.0,
+          "title": "P50 Ms",
+          "type": "number"
+        },
+        "max_ms": {
+          "default": 0.0,
+          "title": "Max Ms",
+          "type": "number"
+        }
+      },
+      "title": "LatencyStats",
+      "type": "object"
+    },
+    "TokenUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "input_tokens": {
+          "default": 0,
+          "title": "Input Tokens",
+          "type": "integer"
+        },
+        "output_tokens": {
+          "default": 0,
+          "title": "Output Tokens",
+          "type": "integer"
+        },
+        "total_tokens": {
+          "default": 0,
+          "title": "Total Tokens",
+          "type": "integer"
+        },
+        "llm_calls": {
+          "default": 0,
+          "title": "Llm Calls",
+          "type": "integer"
+        },
+        "cache_hits": {
+          "default": 0,
+          "title": "Cache Hits",
+          "type": "integer"
+        }
+      },
+      "title": "TokenUsage",
+      "type": "object"
+    },
+    "ToolCallRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "step": {
+          "title": "Step",
+          "type": "integer"
+        },
+        "tool": {
+          "title": "Tool",
+          "type": "string"
+        },
+        "args": {
+          "additionalProperties": true,
+          "title": "Args",
+          "type": "object"
+        },
+        "decision": {
+          "enum": [
+            "allow",
+            "deny",
+            "require_approval"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "rule_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Rule Ids",
+          "type": "array"
+        },
+        "guard": {
+          "default": "none",
+          "title": "Guard",
+          "type": "string"
+        },
+        "latency_ms": {
+          "default": 0.0,
+          "title": "Latency Ms",
+          "type": "number"
+        },
+        "executed": {
+          "default": false,
+          "title": "Executed",
+          "type": "boolean"
+        },
+        "ok": {
+          "default": true,
+          "title": "Ok",
+          "type": "boolean"
+        },
+        "observation": {
+          "default": "",
+          "title": "Observation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "step",
+        "tool",
+        "decision"
+      ],
+      "title": "ToolCallRecord",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "arm": {
+      "title": "Arm",
+      "type": "string"
+    },
+    "agent": {
+      "enum": [
+        "llm",
+        "oracle"
+      ],
+      "title": "Agent",
+      "type": "string"
+    },
+    "provider": {
+      "title": "Provider",
+      "type": "string"
+    },
+    "model": {
+      "title": "Model",
+      "type": "string"
+    },
+    "seed": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Seed"
+    },
+    "guard": {
+      "title": "Guard",
+      "type": "string"
+    },
+    "feedback_mode": {
+      "title": "Feedback Mode",
+      "type": "string"
+    },
+    "scenario_id": {
+      "title": "Scenario Id",
+      "type": "string"
+    },
+    "twin_id": {
+      "title": "Twin Id",
+      "type": "string"
+    },
+    "session_id": {
+      "title": "Session Id",
+      "type": "string"
+    },
+    "category": {
+      "enum": [
+        "security",
+        "blast_radius",
+        "change_window",
+        "sod_approval",
+        "split_change",
+        "injection"
+      ],
+      "title": "Category",
+      "type": "string"
+    },
+    "label": {
+      "enum": [
+        "safe",
+        "unsafe"
+      ],
+      "title": "Label",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "submitted",
+        "finished_without_submit",
+        "max_steps",
+        "stopped_by_guard",
+        "error"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "summary": {
+      "default": "",
+      "title": "Summary",
+      "type": "string"
+    },
+    "steps": {
+      "default": 0,
+      "title": "Steps",
+      "type": "integer"
+    },
+    "tool_calls": {
+      "items": {
+        "$ref": "#/$defs/ToolCallRecord"
+      },
+      "title": "Tool Calls",
+      "type": "array"
+    },
+    "decision_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Decision Counts",
+      "type": "object"
+    },
+    "denied_rule_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Denied Rule Ids",
+      "type": "array"
+    },
+    "approvals_requested": {
+      "default": 0,
+      "title": "Approvals Requested",
+      "type": "integer"
+    },
+    "approvals_granted": {
+      "default": 0,
+      "title": "Approvals Granted",
+      "type": "integer"
+    },
+    "applies": {
+      "default": 0,
+      "title": "Applies",
+      "type": "integer"
+    },
+    "tokens": {
+      "$ref": "#/$defs/TokenUsage"
+    },
+    "cost_usd": {
+      "default": 0.0,
+      "title": "Cost Usd",
+      "type": "number"
+    },
+    "decision_latency": {
+      "$ref": "#/$defs/LatencyStats"
+    },
+    "wall_time_s": {
+      "default": 0.0,
+      "title": "Wall Time S",
+      "type": "number"
+    },
+    "changeset_sources": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Changeset Sources",
+      "type": "object"
+    },
+    "assertions": {
+      "items": {
+        "$ref": "#/$defs/AssertionResult"
+      },
+      "title": "Assertions",
+      "type": "array"
+    },
+    "assertions_passed": {
+      "default": false,
+      "title": "Assertions Passed",
+      "type": "boolean"
+    },
+    "compliant_assertions": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/AssertionResult"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Compliant Assertions"
+    },
+    "compliant_passed": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Compliant Passed"
+    },
+    "final_state_digest": {
+      "default": "",
+      "title": "Final State Digest",
+      "type": "string"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error"
+    }
+  },
+  "required": [
+    "run_id",
+    "arm",
+    "agent",
+    "provider",
+    "model",
+    "guard",
+    "feedback_mode",
+    "scenario_id",
+    "twin_id",
+    "session_id",
+    "category",
+    "label",
+    "status"
+  ],
+  "title": "RunResult",
+  "type": "object"
+}
