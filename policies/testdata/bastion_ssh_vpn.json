@@ -1,0 +1,461 @@
+{
+ "bastion_ssh_vpn": {
+  "action": "terraform_apply",
+  "agent": {
+   "id": "changegate-agent"
+  },
+  "args": {},
+  "changeset": {
+   "base_digest": "a049632ba372d03866e08529e3918554a687ae95103637aa0190c40d29f8c70c",
+   "changes": [
+    {
+     "action": "update",
+     "address": "aws_security_group.bastion",
+     "after": {
+      "description": "Bastion host used for break-glass administration",
+      "egress": [
+       {
+        "cidr_blocks": [
+         "10.0.0.0/16"
+        ],
+        "description": "Administration traffic into the VPC",
+        "from_port": 22,
+        "ipv6_cidr_blocks": [],
+        "prefix_list_ids": [],
+        "protocol": "tcp",
+        "security_groups": [],
+        "self": false,
+        "to_port": 22
+       }
+      ],
+      "ingress": [
+       {
+        "cidr_blocks": [
+         "10.50.0.0/16"
+        ],
+        "description": "SSH access",
+        "from_port": 22,
+        "ipv6_cidr_blocks": [],
+        "prefix_list_ids": [],
+        "protocol": "tcp",
+        "security_groups": [],
+        "self": false,
+        "to_port": 22
+       }
+      ],
+      "name": "fintech-prod-bastion",
+      "region": "us-east-1",
+      "revoke_rules_on_delete": false,
+      "tags": {
+       "Name": "fintech-prod-bastion",
+       "environment": "prod",
+       "owner": "platform-team",
+       "project": "fintech-core"
+      },
+      "tags_all": {
+       "Name": "fintech-prod-bastion",
+       "environment": "prod",
+       "owner": "platform-team",
+       "project": "fintech-core"
+      },
+      "timeouts": null
+     },
+     "before": {
+      "description": "Bastion host used for break-glass administration",
+      "egress": [
+       {
+        "cidr_blocks": [
+         "10.0.0.0/16"
+        ],
+        "description": "Administration traffic into the VPC",
+        "from_port": 22,
+        "ipv6_cidr_blocks": [],
+        "prefix_list_ids": [],
+        "protocol": "tcp",
+        "security_groups": [],
+        "self": false,
+        "to_port": 22
+       }
+      ],
+      "name": "fintech-prod-bastion",
+      "region": "us-east-1",
+      "revoke_rules_on_delete": false,
+      "tags": {
+       "Name": "fintech-prod-bastion",
+       "environment": "prod",
+       "owner": "platform-team",
+       "project": "fintech-core"
+      },
+      "tags_all": {
+       "Name": "fintech-prod-bastion",
+       "environment": "prod",
+       "owner": "platform-team",
+       "project": "fintech-core"
+      },
+      "timeouts": null
+     },
+     "changed_attributes": [
+      "ingress"
+     ],
+     "name": "bastion",
+     "references": {
+      "name": [
+       "local.name_prefix"
+      ],
+      "tags": [
+       "local.common_tags",
+       "local.name_prefix"
+      ],
+      "vpc_id": [
+       "aws_vpc.main"
+      ]
+     },
+     "type": "aws_security_group",
+     "unknown_after": [
+      "arn",
+      "id",
+      "name_prefix",
+      "owner_id",
+      "vpc_id"
+     ]
+    }
+   ],
+   "digest": "467ed0e7ff54d795db79847392beb7109ea3fe01a5978b08f6b1f63e9b587159",
+   "errors": [],
+   "fallback_reason": null,
+   "plan_cached": true,
+   "plan_ms": 8503.8,
+   "source": "plan",
+   "summary": {
+    "create": 0,
+    "delete": 0,
+    "update": 1
+   },
+   "target_digest": "71acea4a6f09e48ab8e225940087df774982bd3d0d4a902ad9dd99afed054e73"
+  },
+  "clock": {
+   "now": "2026-10-17T02:30:00Z"
+  },
+  "inventory": {
+   "aws_db_instance.main": {
+    "name": "fintech-core-db",
+    "tags": {
+     "Name": "fintech-core-db",
+     "criticality": "high",
+     "data_classification": "customer",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_db_instance"
+   },
+   "aws_db_subnet_group.main": {
+    "name": "fintech-prod-db",
+    "tags": {
+     "Name": "fintech-prod-db-subnets",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_db_subnet_group"
+   },
+   "aws_iam_policy.app_s3_read": {
+    "name": "fintech-prod-app-s3-read",
+    "tags": {
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_iam_policy"
+   },
+   "aws_iam_role.app": {
+    "name": "fintech-prod-app",
+    "tags": {
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_iam_role"
+   },
+   "aws_iam_role.ci_deploy": {
+    "name": "fintech-prod-ci-deploy",
+    "tags": {
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_iam_role"
+   },
+   "aws_iam_role_policy_attachment.app_s3_read": {
+    "name": null,
+    "tags": {},
+    "type": "aws_iam_role_policy_attachment"
+   },
+   "aws_internet_gateway.main": {
+    "name": null,
+    "tags": {
+     "Name": "fintech-prod-igw",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_internet_gateway"
+   },
+   "aws_kms_key.data": {
+    "name": null,
+    "tags": {
+     "Name": "fintech-prod-data-key",
+     "criticality": "high",
+     "data_classification": "customer",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_kms_key"
+   },
+   "aws_s3_bucket.audit_log": {
+    "name": "fintech-prod-audit-log",
+    "tags": {
+     "Name": "fintech-prod-audit-log",
+     "criticality": "high",
+     "data_classification": "audit",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core",
+     "retention_until": "2033-12-31"
+    },
+    "type": "aws_s3_bucket"
+   },
+   "aws_s3_bucket.audit_log_2023": {
+    "name": "fintech-prod-audit-log-2023",
+    "tags": {
+     "Name": "fintech-prod-audit-log-2023",
+     "data_classification": "audit",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core",
+     "retention_until": "2030-12-31"
+    },
+    "type": "aws_s3_bucket"
+   },
+   "aws_s3_bucket.customer_data": {
+    "name": "fintech-prod-customer-data",
+    "tags": {
+     "Name": "fintech-prod-customer-data",
+     "criticality": "high",
+     "data_classification": "customer",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_s3_bucket"
+   },
+   "aws_s3_bucket.legacy_exports": {
+    "name": "fintech-prod-legacy-exports",
+    "tags": {
+     "Name": "fintech-prod-legacy-exports",
+     "data_classification": "none",
+     "environment": "prod",
+     "legacy": "true",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_s3_bucket"
+   },
+   "aws_s3_bucket.legacy_tmp": {
+    "name": "fintech-prod-legacy-tmp",
+    "tags": {
+     "Name": "fintech-prod-legacy-tmp",
+     "data_classification": "none",
+     "environment": "prod",
+     "legacy": "true",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_s3_bucket"
+   },
+   "aws_s3_bucket.reports": {
+    "name": "fintech-prod-reports",
+    "tags": {
+     "Name": "fintech-prod-reports",
+     "data_classification": "internal",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_s3_bucket"
+   },
+   "aws_s3_bucket_public_access_block.customer_data": {
+    "name": "fintech-prod-customer-data",
+    "tags": {},
+    "type": "aws_s3_bucket_public_access_block"
+   },
+   "aws_s3_bucket_public_access_block.reports": {
+    "name": "fintech-prod-reports",
+    "tags": {},
+    "type": "aws_s3_bucket_public_access_block"
+   },
+   "aws_s3_bucket_server_side_encryption_configuration.customer_data": {
+    "name": "fintech-prod-customer-data",
+    "tags": {},
+    "type": "aws_s3_bucket_server_side_encryption_configuration"
+   },
+   "aws_s3_bucket_versioning.audit_log": {
+    "name": "fintech-prod-audit-log",
+    "tags": {},
+    "type": "aws_s3_bucket_versioning"
+   },
+   "aws_s3_bucket_versioning.customer_data": {
+    "name": "fintech-prod-customer-data",
+    "tags": {},
+    "type": "aws_s3_bucket_versioning"
+   },
+   "aws_security_group.alb": {
+    "name": "fintech-prod-alb",
+    "tags": {
+     "Name": "fintech-prod-alb",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_security_group"
+   },
+   "aws_security_group.app": {
+    "name": "fintech-prod-app",
+    "tags": {
+     "Name": "fintech-prod-app",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_security_group"
+   },
+   "aws_security_group.bastion": {
+    "name": "fintech-prod-bastion",
+    "tags": {
+     "Name": "fintech-prod-bastion",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_security_group"
+   },
+   "aws_security_group.db": {
+    "name": "fintech-prod-db",
+    "tags": {
+     "Name": "fintech-prod-db",
+     "criticality": "high",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_security_group"
+   },
+   "aws_security_group.legacy_ftp": {
+    "name": "fintech-prod-legacy-ftp",
+    "tags": {
+     "Name": "fintech-prod-legacy-ftp",
+     "environment": "prod",
+     "legacy": "true",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_security_group"
+   },
+   "aws_subnet.app_a": {
+    "name": null,
+    "tags": {
+     "Name": "fintech-prod-app-a",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core",
+     "tier": "app"
+    },
+    "type": "aws_subnet"
+   },
+   "aws_subnet.data_a": {
+    "name": null,
+    "tags": {
+     "Name": "fintech-prod-data-a",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core",
+     "tier": "data"
+    },
+    "type": "aws_subnet"
+   },
+   "aws_subnet.data_b": {
+    "name": null,
+    "tags": {
+     "Name": "fintech-prod-data-b",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core",
+     "tier": "data"
+    },
+    "type": "aws_subnet"
+   },
+   "aws_subnet.legacy_batch": {
+    "name": null,
+    "tags": {
+     "Name": "fintech-prod-legacy-batch",
+     "environment": "prod",
+     "legacy": "true",
+     "owner": "platform-team",
+     "project": "fintech-core",
+     "tier": "legacy"
+    },
+    "type": "aws_subnet"
+   },
+   "aws_subnet.public_a": {
+    "name": null,
+    "tags": {
+     "Name": "fintech-prod-public-a",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core",
+     "tier": "public"
+    },
+    "type": "aws_subnet"
+   },
+   "aws_vpc.main": {
+    "name": null,
+    "tags": {
+     "Name": "fintech-prod-vpc",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_vpc"
+   }
+  },
+  "path": null,
+  "request": {
+   "approver": "alice",
+   "id": "FIX-bastion_ssh_vpn",
+   "requester": "bob",
+   "session_id": "FIX-bastion_ssh_vpn",
+   "text": "fixture bastion_ssh_vpn",
+   "ticket": {
+    "body": "",
+    "id": "CHG-9000",
+    "title": "bastion_ssh_vpn"
+   },
+   "timestamp": "2026-10-17T02:30:00Z"
+  },
+  "session": {
+   "approvals": [],
+   "requests_seen": 0,
+   "session_id": "FIX-bastion_ssh_vpn",
+   "window_id": "2026-10-17T02:00Z",
+   "window_totals": {
+    "applies": 0,
+    "changes": 0,
+    "creates": 0,
+    "deletes": 0,
+    "updates": 0,
+    "window_id": "2026-10-17T02:00Z"
+   }
+  }
+ }
+}

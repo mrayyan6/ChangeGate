@@ -1,0 +1,547 @@
+{
+ "rds_instance_class": {
+  "action": "terraform_apply",
+  "agent": {
+   "id": "changegate-agent"
+  },
+  "args": {},
+  "changeset": {
+   "base_digest": "a049632ba372d03866e08529e3918554a687ae95103637aa0190c40d29f8c70c",
+   "changes": [
+    {
+     "action": "update",
+     "address": "aws_db_instance.main",
+     "after": {
+      "allocated_storage": 50,
+      "allow_major_version_upgrade": null,
+      "apply_immediately": false,
+      "auto_minor_version_upgrade": true,
+      "backup_retention_period": 7,
+      "backup_window": "03:00-03:30",
+      "blue_green_update": [],
+      "copy_tags_to_snapshot": false,
+      "custom_iam_instance_profile": null,
+      "customer_owned_ip_enabled": null,
+      "db_name": "ledger",
+      "db_subnet_group_name": "fintech-prod-db",
+      "dedicated_log_volume": false,
+      "delete_automated_backups": true,
+      "deletion_protection": true,
+      "domain": null,
+      "domain_auth_secret_arn": null,
+      "domain_dns_ips": null,
+      "domain_iam_role_name": null,
+      "domain_ou": null,
+      "enabled_cloudwatch_logs_exports": null,
+      "engine": "postgres",
+      "engine_version": "16.4",
+      "final_snapshot_identifier": "fintech-core-db-final",
+      "iam_database_authentication_enabled": false,
+      "identifier": "fintech-core-db",
+      "instance_class": "db.t3.large",
+      "maintenance_window": "sat:04:00-sat:04:30",
+      "manage_master_user_password": true,
+      "max_allocated_storage": null,
+      "monitoring_interval": 0,
+      "password": null,
+      "password_wo": null,
+      "password_wo_version": null,
+      "performance_insights_enabled": false,
+      "publicly_accessible": false,
+      "region": "us-east-1",
+      "replicate_source_db": null,
+      "restore_to_point_in_time": [],
+      "s3_import": [],
+      "skip_final_snapshot": false,
+      "storage_encrypted": true,
+      "storage_type": "gp3",
+      "tags": {
+       "Name": "fintech-core-db",
+       "criticality": "high",
+       "data_classification": "customer",
+       "environment": "prod",
+       "owner": "platform-team",
+       "project": "fintech-core"
+      },
+      "tags_all": {
+       "Name": "fintech-core-db",
+       "criticality": "high",
+       "data_classification": "customer",
+       "environment": "prod",
+       "owner": "platform-team",
+       "project": "fintech-core"
+      },
+      "timeouts": null,
+      "upgrade_storage_config": null,
+      "username": "ledger_admin",
+      "warning_event_categories": null
+     },
+     "before": {
+      "allocated_storage": 50,
+      "allow_major_version_upgrade": null,
+      "apply_immediately": false,
+      "auto_minor_version_upgrade": true,
+      "backup_retention_period": 7,
+      "backup_window": "03:00-03:30",
+      "blue_green_update": [],
+      "copy_tags_to_snapshot": false,
+      "custom_iam_instance_profile": null,
+      "customer_owned_ip_enabled": null,
+      "db_name": "ledger",
+      "db_subnet_group_name": "fintech-prod-db",
+      "dedicated_log_volume": false,
+      "delete_automated_backups": true,
+      "deletion_protection": true,
+      "domain": null,
+      "domain_auth_secret_arn": null,
+      "domain_dns_ips": null,
+      "domain_iam_role_name": null,
+      "domain_ou": null,
+      "enabled_cloudwatch_logs_exports": null,
+      "engine": "postgres",
+      "engine_version": "16.4",
+      "final_snapshot_identifier": "fintech-core-db-final",
+      "iam_database_authentication_enabled": false,
+      "identifier": "fintech-core-db",
+      "instance_class": "db.t3.medium",
+      "maintenance_window": "sat:04:00-sat:04:30",
+      "manage_master_user_password": true,
+      "max_allocated_storage": null,
+      "monitoring_interval": 0,
+      "password": null,
+      "password_wo": null,
+      "password_wo_version": null,
+      "performance_insights_enabled": false,
+      "publicly_accessible": false,
+      "region": "us-east-1",
+      "replicate_source_db": null,
+      "restore_to_point_in_time": [],
+      "s3_import": [],
+      "skip_final_snapshot": false,
+      "storage_encrypted": true,
+      "storage_type": "gp3",
+      "tags": {
+       "Name": "fintech-core-db",
+       "criticality": "high",
+       "data_classification": "customer",
+       "environment": "prod",
+       "owner": "platform-team",
+       "project": "fintech-core"
+      },
+      "tags_all": {
+       "Name": "fintech-core-db",
+       "criticality": "high",
+       "data_classification": "customer",
+       "environment": "prod",
+       "owner": "platform-team",
+       "project": "fintech-core"
+      },
+      "timeouts": null,
+      "upgrade_storage_config": null,
+      "username": "ledger_admin",
+      "warning_event_categories": null
+     },
+     "changed_attributes": [
+      "instance_class"
+     ],
+     "name": "main",
+     "references": {
+      "backup_window": [
+       "var.db_backup_window"
+      ],
+      "db_subnet_group_name": [
+       "aws_db_subnet_group.main"
+      ],
+      "kms_key_id": [
+       "aws_kms_key.data"
+      ],
+      "tags": [
+       "local.common_tags"
+      ],
+      "vpc_security_group_ids": [
+       "aws_security_group.db"
+      ]
+     },
+     "type": "aws_db_instance",
+     "unknown_after": [
+      "address",
+      "arn",
+      "availability_zone",
+      "backup_target",
+      "ca_cert_identifier",
+      "character_set_name",
+      "database_insights_mode",
+      "domain_fqdn",
+      "endpoint",
+      "engine_lifecycle_support",
+      "engine_version_actual",
+      "hosted_zone_id",
+      "id",
+      "identifier_prefix",
+      "iops",
+      "kms_key_id",
+      "latest_restorable_time",
+      "license_model",
+      "listener_endpoint",
+      "master_user_secret",
+      "master_user_secret_kms_key_id",
+      "monitoring_role_arn",
+      "multi_az",
+      "nchar_character_set_name",
+      "network_type",
+      "option_group_name",
+      "parameter_group_name",
+      "performance_insights_kms_key_id",
+      "performance_insights_retention_period",
+      "port",
+      "replica_mode",
+      "replicas",
+      "resource_id",
+      "snapshot_identifier",
+      "status",
+      "storage_throughput",
+      "timezone",
+      "upgrade_rollout_order",
+      "vpc_security_group_ids"
+     ]
+    }
+   ],
+   "digest": "5f4403bfe8f8d6a2503a0af53a48695ce46467673296a823a99e633089277fca",
+   "errors": [],
+   "fallback_reason": null,
+   "plan_cached": false,
+   "plan_ms": 8314.4,
+   "source": "plan",
+   "summary": {
+    "create": 0,
+    "delete": 0,
+    "update": 1
+   },
+   "target_digest": "9d8b165af9f3fac582c9b90bd7df131f236558ce88ba2ccedb2cc819b5be655b"
+  },
+  "clock": {
+   "now": "2026-10-17T02:30:00Z"
+  },
+  "inventory": {
+   "aws_db_instance.main": {
+    "name": "fintech-core-db",
+    "tags": {
+     "Name": "fintech-core-db",
+     "criticality": "high",
+     "data_classification": "customer",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_db_instance"
+   },
+   "aws_db_subnet_group.main": {
+    "name": "fintech-prod-db",
+    "tags": {
+     "Name": "fintech-prod-db-subnets",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_db_subnet_group"
+   },
+   "aws_iam_policy.app_s3_read": {
+    "name": "fintech-prod-app-s3-read",
+    "tags": {
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_iam_policy"
+   },
+   "aws_iam_role.app": {
+    "name": "fintech-prod-app",
+    "tags": {
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_iam_role"
+   },
+   "aws_iam_role.ci_deploy": {
+    "name": "fintech-prod-ci-deploy",
+    "tags": {
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_iam_role"
+   },
+   "aws_iam_role_policy_attachment.app_s3_read": {
+    "name": null,
+    "tags": {},
+    "type": "aws_iam_role_policy_attachment"
+   },
+   "aws_internet_gateway.main": {
+    "name": null,
+    "tags": {
+     "Name": "fintech-prod-igw",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_internet_gateway"
+   },
+   "aws_kms_key.data": {
+    "name": null,
+    "tags": {
+     "Name": "fintech-prod-data-key",
+     "criticality": "high",
+     "data_classification": "customer",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_kms_key"
+   },
+   "aws_s3_bucket.audit_log": {
+    "name": "fintech-prod-audit-log",
+    "tags": {
+     "Name": "fintech-prod-audit-log",
+     "criticality": "high",
+     "data_classification": "audit",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core",
+     "retention_until": "2033-12-31"
+    },
+    "type": "aws_s3_bucket"
+   },
+   "aws_s3_bucket.audit_log_2023": {
+    "name": "fintech-prod-audit-log-2023",
+    "tags": {
+     "Name": "fintech-prod-audit-log-2023",
+     "data_classification": "audit",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core",
+     "retention_until": "2030-12-31"
+    },
+    "type": "aws_s3_bucket"
+   },
+   "aws_s3_bucket.customer_data": {
+    "name": "fintech-prod-customer-data",
+    "tags": {
+     "Name": "fintech-prod-customer-data",
+     "criticality": "high",
+     "data_classification": "customer",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_s3_bucket"
+   },
+   "aws_s3_bucket.legacy_exports": {
+    "name": "fintech-prod-legacy-exports",
+    "tags": {
+     "Name": "fintech-prod-legacy-exports",
+     "data_classification": "none",
+     "environment": "prod",
+     "legacy": "true",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_s3_bucket"
+   },
+   "aws_s3_bucket.legacy_tmp": {
+    "name": "fintech-prod-legacy-tmp",
+    "tags": {
+     "Name": "fintech-prod-legacy-tmp",
+     "data_classification": "none",
+     "environment": "prod",
+     "legacy": "true",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_s3_bucket"
+   },
+   "aws_s3_bucket.reports": {
+    "name": "fintech-prod-reports",
+    "tags": {
+     "Name": "fintech-prod-reports",
+     "data_classification": "internal",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_s3_bucket"
+   },
+   "aws_s3_bucket_public_access_block.customer_data": {
+    "name": "fintech-prod-customer-data",
+    "tags": {},
+    "type": "aws_s3_bucket_public_access_block"
+   },
+   "aws_s3_bucket_public_access_block.reports": {
+    "name": "fintech-prod-reports",
+    "tags": {},
+    "type": "aws_s3_bucket_public_access_block"
+   },
+   "aws_s3_bucket_server_side_encryption_configuration.customer_data": {
+    "name": "fintech-prod-customer-data",
+    "tags": {},
+    "type": "aws_s3_bucket_server_side_encryption_configuration"
+   },
+   "aws_s3_bucket_versioning.audit_log": {
+    "name": "fintech-prod-audit-log",
+    "tags": {},
+    "type": "aws_s3_bucket_versioning"
+   },
+   "aws_s3_bucket_versioning.customer_data": {
+    "name": "fintech-prod-customer-data",
+    "tags": {},
+    "type": "aws_s3_bucket_versioning"
+   },
+   "aws_security_group.alb": {
+    "name": "fintech-prod-alb",
+    "tags": {
+     "Name": "fintech-prod-alb",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_security_group"
+   },
+   "aws_security_group.app": {
+    "name": "fintech-prod-app",
+    "tags": {
+     "Name": "fintech-prod-app",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_security_group"
+   },
+   "aws_security_group.bastion": {
+    "name": "fintech-prod-bastion",
+    "tags": {
+     "Name": "fintech-prod-bastion",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_security_group"
+   },
+   "aws_security_group.db": {
+    "name": "fintech-prod-db",
+    "tags": {
+     "Name": "fintech-prod-db",
+     "criticality": "high",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_security_group"
+   },
+   "aws_security_group.legacy_ftp": {
+    "name": "fintech-prod-legacy-ftp",
+    "tags": {
+     "Name": "fintech-prod-legacy-ftp",
+     "environment": "prod",
+     "legacy": "true",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_security_group"
+   },
+   "aws_subnet.app_a": {
+    "name": null,
+    "tags": {
+     "Name": "fintech-prod-app-a",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core",
+     "tier": "app"
+    },
+    "type": "aws_subnet"
+   },
+   "aws_subnet.data_a": {
+    "name": null,
+    "tags": {
+     "Name": "fintech-prod-data-a",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core",
+     "tier": "data"
+    },
+    "type": "aws_subnet"
+   },
+   "aws_subnet.data_b": {
+    "name": null,
+    "tags": {
+     "Name": "fintech-prod-data-b",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core",
+     "tier": "data"
+    },
+    "type": "aws_subnet"
+   },
+   "aws_subnet.legacy_batch": {
+    "name": null,
+    "tags": {
+     "Name": "fintech-prod-legacy-batch",
+     "environment": "prod",
+     "legacy": "true",
+     "owner": "platform-team",
+     "project": "fintech-core",
+     "tier": "legacy"
+    },
+    "type": "aws_subnet"
+   },
+   "aws_subnet.public_a": {
+    "name": null,
+    "tags": {
+     "Name": "fintech-prod-public-a",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core",
+     "tier": "public"
+    },
+    "type": "aws_subnet"
+   },
+   "aws_vpc.main": {
+    "name": null,
+    "tags": {
+     "Name": "fintech-prod-vpc",
+     "environment": "prod",
+     "owner": "platform-team",
+     "project": "fintech-core"
+    },
+    "type": "aws_vpc"
+   }
+  },
+  "path": null,
+  "request": {
+   "approver": "alice",
+   "id": "FIX-rds_instance_class",
+   "requester": "bob",
+   "session_id": "FIX-rds_instance_class",
+   "text": "fixture rds_instance_class",
+   "ticket": {
+    "body": "",
+    "id": "CHG-9000",
+    "title": "rds_instance_class"
+   },
+   "timestamp": "2026-10-17T02:30:00Z"
+  },
+  "session": {
+   "approvals": [],
+   "requests_seen": 0,
+   "session_id": "FIX-rds_instance_class",
+   "window_id": "2026-10-17T02:00Z",
+   "window_totals": {
+    "applies": 0,
+    "changes": 0,
+    "creates": 0,
+    "deletes": 0,
+    "updates": 0,
+    "window_id": "2026-10-17T02:00Z"
+   }
+  }
+ }
+}
