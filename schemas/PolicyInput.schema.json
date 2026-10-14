@@ -249,6 +249,39 @@
       "title": "Clock",
       "type": "object"
     },
+    "InventoryItem": {
+      "additionalProperties": false,
+      "description": "Compact view of one deployed (or newly created) resource, for rules that need context.",
+      "properties": {
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "bucket, identifier or name attribute when known",
+          "title": "Name"
+        },
+        "tags": {
+          "additionalProperties": true,
+          "title": "Tags",
+          "type": "object"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "InventoryItem",
+      "type": "object"
+    },
     "PathInfo": {
       "additionalProperties": false,
       "description": "Normalized target path for file actions, computed by the PEP from the raw argument.",
@@ -491,6 +524,14 @@
         }
       ],
       "default": null
+    },
+    "inventory": {
+      "additionalProperties": {
+        "$ref": "#/$defs/InventoryItem"
+      },
+      "description": "Deployed resources plus resources created by the changeset.",
+      "title": "Inventory",
+      "type": "object"
     },
     "request": {
       "$ref": "#/$defs/ChangeRequest"
