@@ -16,7 +16,7 @@ from changegate.feedback import FeedbackComposer
 from changegate.plan_diff import sha256_json
 from changegate.policy_input import build_policy_input, clip_args
 from changegate.runtime import RunContext
-from changegate.tools import ToolExecutor
+from changegate.tools import ToolExecutor, normalize_args
 
 # Actions whose PolicyInput carries the pending ChangeSet.
 EVALUATED_ACTIONS = {"terraform_plan", "terraform_apply", "request_approval"}
@@ -109,10 +109,11 @@ class PEP:
 
     def handle(self, tool: str, args: dict[str, Any] | None = None) -> str:
         ctx = self.ctx
-        args = dict(args or {})
+        raw_args = dict(args or {})
+        args = normalize_args(tool, raw_args)
         ctx.step += 1
         proposal = ActionProposal(
-            request_id=ctx.request.id, step=ctx.step, tool=tool, args=clip_args(args), proposed_by=ctx.agent_id
+            request_id=ctx.request.id, step=ctx.step, tool=tool, args=clip_args(raw_args), proposed_by=ctx.agent_id
         )
         policy_input, decision, evaluation = self.decide(tool, args)
         ctx.decision_latencies.append(decision.latency_ms)

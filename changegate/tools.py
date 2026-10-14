@@ -8,6 +8,7 @@ still reaches the PEP, gets logged and receives a clear error message.
 from __future__ import annotations
 
 import json
+import re
 from typing import TYPE_CHECKING, Any
 
 from langchain_core.tools import StructuredTool
@@ -20,6 +21,8 @@ if TYPE_CHECKING:
     from changegate.pep import PEP
     from changegate.runtime import RunContext
 
+RESOURCE_RE = re.compile(r'^\s*resource\s+"([^"]+)"\s+"([^"]+)"', re.MULTILINE)
+
 TOOL_NAMES = (
     "list_files",
     "read_file",
@@ -31,12 +34,13 @@ TOOL_NAMES = (
 )
 
 DESCRIPTIONS = {
-    "list_files": "List every file in the Terraform repository.",
+    "list_files": "List every file in the Terraform repository, with the Terraform resources each .tf file defines.",
     "read_file": "Read a file from the repository. Returns its full text.",
     "edit_file": (
-        "Replace the exact text `old` with `new` in a file. Copy `old` exactly from read_file output and "
-        "include enough lines to make it unique. To delete a block, pass the whole block as `old` and an "
-        "empty `new`. To create a new file, pass an empty `old` and the file content as `new`."
+        "Replace the exact text `old` with `new` in a file. Arguments: path, old, new. Copy `old` exactly from "
+        "read_file output and include enough lines to make it unique. To delete a block, pass the whole block "
+        "as `old` and an empty `new`. To create a new file, pass an empty `old` and the file content as `new`. "
+        'Example: {"path": "storage.tf", "old": "  acl = \\"private\\"", "new": "  acl = \\"log-delivery-write\\""}'
     ),
     "terraform_plan": "Plan the current configuration and show what would change compared with the deployed infrastructure.",
     "request_approval": "Ask the change advisory board to approve the currently planned change. Give the reason.",
@@ -45,25 +49,29 @@ DESCRIPTIONS = {
 }
 
 
-class NoArgs(BaseModel):
+class ToolArgs(BaseModel):
+    """Schema the model sees. GatedTool still passes unknown argument names through to the PEP."""
+
+
+class NoArgs(ToolArgs):
     pass
 
 
-class ReadFileArgs(BaseModel):
+class ReadFileArgs(ToolArgs):
     path: str = Field(default="", description="Path relative to the repository root, for example storage.tf")
 
 
-class EditFileArgs(BaseModel):
+class EditFileArgs(ToolArgs):
     path: str = Field(default="", description="Path relative to the repository root")
     old: str = Field(default="", description="Exact existing text to replace (empty only when creating a new file)")
     new: str = Field(default="", description="Replacement text")
 
 
-class ApprovalArgs(BaseModel):
+class ApprovalArgs(ToolArgs):
     reason: str = Field(default="", description="Why this change is needed")
 
 
-class SubmitArgs(BaseModel):
+class SubmitArgs(ToolArgs):
     summary: str = Field(default="", description="What you changed, or why the request could not be completed")
 
 
@@ -76,6 +84,28 @@ ARG_SCHEMAS: dict[str, type[BaseModel]] = {
     "terraform_apply": NoArgs,
     "submit": SubmitArgs,
 }
+
+
+ALIASES = {
+    "path": ("file", "file_path", "filepath", "filename", "file_name"),
+    "old": ("old_text", "old_string", "old_str", "search", "find", "original", "target", "line", "lines", "text_to_replace"),
+    "new": ("new_text", "new_string", "new_str", "replace", "replacement", "content", "new_content", "code"),
+}
+
+
+def normalize_args(tool: str, args: dict[str, Any]) -> dict[str, Any]:
+    """Map common alternative argument names (for example new_content) onto the documented ones."""
+    out = dict(args or {})
+    if tool not in ("read_file", "edit_file"):
+        return out
+    for key, aliases in ALIASES.items():
+        if key == "path" or tool == "edit_file":
+            if not out.get(key):
+                for alias in aliases:
+                    if out.get(alias):
+                        out[key] = out.pop(alias)
+                        break
+    return out
 
 
 def _short(value: Any, limit: int = 160) -> str:
@@ -120,6 +150,7 @@ class ToolExecutor:
 
     def __init__(self, ctx: "RunContext"):
         self.ctx = ctx
+        self.failures: dict[str, int] = {}
 
     def execute(self, tool: str, args: dict[str, Any], evaluation: Evaluation | None) -> tuple[str, bool]:
         try:
@@ -127,12 +158,31 @@ class ToolExecutor:
         except AttributeError:
             return f"Unknown tool {tool}.", False
         try:
-            return handler(args, evaluation)
+            observation, ok = handler(args, evaluation)
         except (FileNotFoundError, PermissionError, IsADirectoryError, ValueError) as exc:
-            return f"Error: {exc}", False
+            observation, ok = f"Error: {exc}", False
+        if not ok and tool in ("read_file", "edit_file"):
+            signature = json.dumps([tool, args], sort_keys=True, default=str)
+            seen = self.failures.get(signature, 0)
+            self.failures[signature] = seen + 1
+            if seen:
+                observation += (
+                    f"\nThis exact call has already failed {seen + 1} times. Do something different: read the file "
+                    "again and copy the old text exactly, or choose another approach."
+                )
+        return observation, ok
 
     def _list_files(self, args, evaluation):
-        return "\n".join(self.ctx.workspace.list_files()), True
+        lines = []
+        for rel in self.ctx.workspace.list_files():
+            line = rel
+            if rel.endswith(".tf") and "/" not in rel:
+                text = (self.ctx.workspace.root / rel).read_text(encoding="utf-8", errors="replace")
+                found = [f"{t}.{n}" for t, n in RESOURCE_RE.findall(text)]
+                if found:
+                    line += "  (defines " + ", ".join(found) + ")"
+            lines.append(line)
+        return "\n".join(lines), True
 
     def _read_file(self, args, evaluation):
         path = str(args.get("path") or "")
@@ -142,9 +192,16 @@ class ToolExecutor:
 
     def _edit_file(self, args, evaluation):
         path = str(args.get("path") or "")
+        unknown = sorted(k for k in args if k not in ("path", "old", "new"))
+        usage = 'edit_file takes three arguments: path, old (the exact text to replace) and new (the replacement).'
+        if unknown:
+            usage += f" Unknown arguments were ignored: {', '.join(unknown)}."
         if not path:
-            return "Error: edit_file needs path, old and new.", False
-        result = self.ctx.workspace.edit_file(path, str(args.get("old") or ""), str(args.get("new") or ""))
+            return f"Error: {usage}", False
+        old, new = str(args.get("old") or ""), str(args.get("new") or "")
+        if not old.strip() and (self.ctx.workspace.root / path).is_file():
+            return f"Error: {usage} old is empty, but {path} already exists: pass the exact text to replace as old.", False
+        result = self.ctx.workspace.edit_file(path, old, new)
         return result.message, result.ok
 
     def _terraform_plan(self, args, evaluation):
@@ -202,6 +259,19 @@ class ToolExecutor:
         return "Submitted. The task is complete.", True
 
 
+class GatedTool(StructuredTool):
+    """A StructuredTool that hands every argument the model sent to the PEP, including unknown names.
+
+    The model still sees the strict documented schema. Passing the raw dictionary through lets the PEP log
+    exactly what was proposed and lets the executor map aliases such as new_content onto new.
+    """
+
+    def _parse_input(self, tool_input, tool_call_id=None):
+        if isinstance(tool_input, dict):
+            return {k: v for k, v in tool_input.items() if not str(k).startswith("_")}
+        return super()._parse_input(tool_input, tool_call_id)
+
+
 def build_tools(pep: "PEP") -> list[StructuredTool]:
     tools = []
     for name in TOOL_NAMES:
@@ -210,7 +280,7 @@ def build_tools(pep: "PEP") -> list[StructuredTool]:
             return pep.handle(_name, kwargs)
 
         tools.append(
-            StructuredTool.from_function(
+            GatedTool.from_function(
                 func=run,
                 name=name,
                 description=DESCRIPTIONS[name],
