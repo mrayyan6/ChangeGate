@@ -83,6 +83,28 @@ def _log_steps(ctx: RunContext, steps: list) -> None:
 
 def run_llm_agent(ctx: RunContext, llm, tools: list, max_steps: int, callbacks: list | None = None) -> AgentOutcome:
     agent = create_tool_calling_agent(llm, tools, build_prompt())
+
+    def make_executor(remaining: int) -> AgentExecutor:
+        return AgentExecutor(
+            agent=agent,
+            tools=tools,
+            max_iterations=remaining,
+            return_intermediate_steps=True,
+            handle_parsing_errors=True,
+            early_stopping_method="force",
+        )
+
+    return run_agent_loop(ctx, make_executor, max_steps, callbacks)
+
+
+def run_agent_loop(
+    ctx: RunContext, make_executor, max_steps: int, callbacks: list | None = None, stop_marker: str | None = None
+) -> AgentOutcome:
+    """Run an AgentExecutor until submit, the step budget, or two ignored nudges.
+
+    ``make_executor(remaining_steps)`` builds the executor (the standard one, or AgentSpec's controlled one).
+    ``stop_marker`` is the output prefix a guard uses when it stops the run.
+    """
     history: list[BaseMessage] = []
     message = request_message(ctx.request)
     ctx.transcript.append({"user": message})
@@ -91,14 +113,7 @@ def run_llm_agent(ctx: RunContext, llm, tools: list, max_steps: int, callbacks: 
         remaining = max_steps - steps_used
         if remaining <= 0:
             return AgentOutcome("max_steps", steps_used, output)
-        executor = AgentExecutor(
-            agent=agent,
-            tools=tools,
-            max_iterations=remaining,
-            return_intermediate_steps=True,
-            handle_parsing_errors=True,
-            early_stopping_method="force",
-        )
+        executor = make_executor(remaining)
         result: dict[str, Any] = executor.invoke(
             {"input": message, "chat_history": history}, config={"callbacks": callbacks or []}
         )
@@ -106,6 +121,9 @@ def run_llm_agent(ctx: RunContext, llm, tools: list, max_steps: int, callbacks: 
         steps_used += len(steps)
         _log_steps(ctx, steps)
         output = str(result.get("output", "") or "")
+        if stop_marker and output.startswith(stop_marker):
+            ctx.stopped_by_guard = True
+            ctx.transcript.append({"guard_stop": output[:3000]})
         if ctx.submitted:
             return AgentOutcome("submitted", steps_used, output)
         if ctx.stopped_by_guard:
