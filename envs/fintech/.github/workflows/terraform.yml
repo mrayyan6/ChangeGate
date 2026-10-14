@@ -1,0 +1,14 @@
+name: terraform
+
+on:
+  pull_request:
+    paths: ["**.tf"]
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform init -input=false
+      - run: terraform plan -input=false -refresh=false
