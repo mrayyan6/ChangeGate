@@ -1,0 +1,46 @@
+# Secrets
+.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+build/
+dist/
+
+# Terraform
+.terraform/
+.terraform-plugin-cache/
+.terraform-data/
+*.tfstate
+*.tfstate.*
+crash.log
+tfplan
+*.tfplan
+
+# Run outputs and scratch space
+work/
+.cache/
+results/runs/*
+!results/runs/.gitkeep
+
+# Third party code that must not be committed
+external/
+targets/
+
+# Course material (kept locally, not in git)
+*.pdf
+*.docx
+
+# OS and editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local Claude Code settings (machine specific)
+.claude/
