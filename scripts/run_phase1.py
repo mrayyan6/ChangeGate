@@ -29,6 +29,9 @@ LANES = [
     [("B0", None), ("B2", None), ("B1", None)],
     [("P", None), ("P-reason", "unsafe"), ("P-bare", "unsafe")],
 ]
+# With one lane the core comparison runs first. One lane is the default for a local Ollama model: Ollama
+# serves one request at a time, and two interleaved conversations evict each other's cached prompt prefix.
+SINGLE_LANE = [("B0", None), ("P", None), ("B2", None), ("B1", None), ("P-reason", "unsafe"), ("P-bare", "unsafe")]
 
 
 def agentspec_ready() -> bool:
@@ -76,7 +79,7 @@ class Driver:
 
     def run(self) -> int:
         self.log(f"driver started (pid {os.getpid()}), run id {self.args.run_id}")
-        lanes = LANES if self.args.lanes > 1 else [[step for lane in LANES for step in lane]]
+        lanes = LANES if self.args.lanes > 1 else [SINGLE_LANE]
         threads = [threading.Thread(target=self.run_lane, args=(lane,)) for lane in lanes]
         for t in threads:
             t.start()
@@ -96,7 +99,7 @@ def main() -> int:
     parser.add_argument("--run-id", required=True)
     parser.add_argument("--provider", default=None)
     parser.add_argument("--model", default=None)
-    parser.add_argument("--lanes", type=int, default=2)
+    parser.add_argument("--lanes", type=int, default=1, help="2 runs two arms at once (useful for an API model)")
     parser.add_argument("--prefix", default="phase1", help="summary file prefix")
     parser.add_argument("--set", action="append", help="config override key.path=value")
     return Driver(parser.parse_args()).run()
