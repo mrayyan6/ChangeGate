@@ -46,6 +46,7 @@ def run(
     run_id: Optional[str] = typer.Option(None, help="Reuse or name a run id."),
     parallel: int = typer.Option(1, help="Run several arms at once as separate processes."),
     max_steps: Optional[int] = typer.Option(None, help="Tool calls per request."),
+    resume: bool = typer.Option(False, help="Skip sessions that already have results in this run id."),
     config: Optional[Path] = typer.Option(None, help="Config file (default config/default.yaml)."),
     set_: Optional[list[str]] = typer.Option(None, "--set", help="Config override key.path=value; repeatable."),
 ):
@@ -70,7 +71,7 @@ def run(
         return
     for name in arm_names:
         runner = ArmRunner(cfg, run_id, name, agent)
-        results = runner.run(chosen, progress=lambda line: typer.echo(line))
+        results = runner.run(chosen, progress=lambda line: typer.echo(line), resume=resume)
         passed = sum(r.assertions_passed for r in results)
         typer.echo(f"[{name}] done: {passed}/{len(results)} requests met their assertions")
     typer.echo(f"results in {(cfg.path(cfg.run.results_dir) / 'runs' / run_id).relative_to(REPO_ROOT).as_posix()}")
@@ -101,7 +102,7 @@ def _run_parallel(arm_names: list[str], parallel: int, run_id: str, cfg: Config)
             log_path.parent.mkdir(parents=True, exist_ok=True)
             log = log_path.open("w", encoding="utf-8")
             cmd = [sys.executable, "-m", "changegate", *base, "--arms", arm, "--run-id", run_id]
-            proc = subprocess.Popen(cmd, cwd=REPO_ROOT, stdout=log, stderr=subprocess.STDOUT, env=dict(os.environ, PYTHONIOENCODING="utf-8"))
+            proc = subprocess.Popen(cmd, cwd=REPO_ROOT, stdout=log, stderr=subprocess.STDOUT, env=dict(os.environ, PYTHONIOENCODING="utf-8", PYTHONUNBUFFERED="1"))
             running.append((arm, proc, log))
             typer.echo(f"started arm {arm} (pid {proc.pid}), log: {log_path.relative_to(REPO_ROOT).as_posix()}")
         for item in list(running):

@@ -132,11 +132,29 @@ class ArmRunner:
         }
         (self.out_dir / "arm_meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
-    def run(self, scenarios: list[Scenario], progress=print) -> list[RunResult]:
+    def completed_ids(self) -> set[str]:
+        """Scenario ids that already have a non error result in this arm's runs.jsonl."""
+        runs_file = self.out_dir / "runs.jsonl"
+        done: set[str] = set()
+        if runs_file.exists():
+            for line in runs_file.read_text(encoding="utf-8").splitlines():
+                if line.strip():
+                    r = RunResult.model_validate_json(line)
+                    if r.status != "error":
+                        done.add(r.scenario_id)
+                    else:
+                        done.discard(r.scenario_id)
+        return done
+
+    def run(self, scenarios: list[Scenario], progress=print, resume: bool = False) -> list[RunResult]:
         self.write_meta(scenarios)
         results: list[RunResult] = []
+        done = self.completed_ids() if resume else set()
         try:
             for session_id, members in group_sessions(scenarios):
+                if resume and all(m.id in done for m in members):
+                    progress(f"[{self.arm_name}] {session_id}: already done, skipped")
+                    continue
                 # A session always starts from the pristine env and an empty session record.
                 dest = self.work_dir / slug(session_id)
                 if dest.exists():
