@@ -25,6 +25,8 @@ from changegate.contracts import RunResult
 from changegate.scenarios import load_scenarios
 
 ARM_ORDER = ["B0", "B1", "B2", "P", "P-reason", "P-bare"]
+# Each arm keeps one color slot in every chart (color follows the entity, never its rank).
+ARM_SLOT = {"P": 0, "B0": 1, "B2": 2, "B1": 3, "P-reason": 4, "P-bare": 5}
 CATEGORIES = ["security", "blast_radius", "change_window", "sod_approval", "split_change", "injection"]
 # Categorical slots 1 to 6 of the dataviz reference palette, light mode, in fixed order.
 SERIES = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300"]
@@ -166,8 +168,12 @@ def write_markdown(path: Path, metrics: dict[str, dict[str, Any]], run_ids: list
         "| " + " | ".join(header) + " |",
         "|" + "|".join(["---"] * len(header)) + "|",
     ]
+    safe_columns = {"False blocks (G2)", "Task completion"}
     for arm, m in metrics.items():
-        cells = [arm, m["guard"], m["feedback"]] + [fn(m) for _, fn in COLUMNS]
+        unsafe_only = m["completion"]["n"] * 2 < m["interception"]["n"]
+        cells = [arm, m["guard"], m["feedback"]] + [
+            "unsafe only" if unsafe_only and name in safe_columns else fn(m) for name, fn in COLUMNS
+        ]
         lines.append("| " + " | ".join(cells) + " |")
     lines += [
         "",
@@ -176,7 +182,8 @@ def write_markdown(path: Path, metrics: dict[str, dict[str, Any]], run_ids: list
         "(approval requests are not denies). Task completion: safe requests whose end state assertions pass. "
         "Recovery: blocked requests that end in the compliant end state, among blocked requests with a compliant "
         "alternative. All outcomes are judged on the final deployed state by Python assertions that do not use the "
-        "Rego policies.",
+        "Rego policies. Arms marked unsafe only (the G3 feedback ablations) ran the 20 unsafe requests plus the safe "
+        "requests that open the two split sessions.",
         "",
     ]
     path.write_text("\n".join(lines), encoding="utf-8", newline="\n")
@@ -210,21 +217,25 @@ def plot_metrics(path: Path, metrics: dict[str, dict[str, Any]], title: str) -> 
     _style(ax)
     group = 0.8
     width = min(group / max(len(arms), 1), 0.22)
+    from matplotlib.patches import Patch
+
     for i, arm in enumerate(arms):
-        xs, ys = [], []
+        color = SERIES[ARM_SLOT.get(arm, i) % len(SERIES)]
         for j, (key, _) in enumerate(names):
             rate = metrics[arm][key]["rate"]
-            xs.append(j - group / 2 + width * (i + 0.5) + (group - width * len(arms)) / 2)
-            ys.append(0 if rate is None else 100 * rate)
-        bars = ax.bar(xs, ys, width=width - 0.02, color=SERIES[ARM_ORDER.index(arm) % 6 if arm in ARM_ORDER else i % 6],
-                      label=arm, edgecolor=SURFACE, linewidth=1)
-        for bar, y in zip(bars, ys):
-            ax.text(bar.get_x() + bar.get_width() / 2, y + 1.5, f"{y:.0f}", ha="center", va="bottom", fontsize=7, color=INK_2)
+            x = j - group / 2 + width * (i + 0.5) + (group - width * len(arms)) / 2
+            if rate is None:  # nothing to measure for this arm: say so instead of drawing a zero
+                ax.text(x, 1.5, "n/a", ha="center", va="bottom", fontsize=7, color=MUTED)
+                continue
+            y = 100 * rate
+            ax.bar([x], [y], width=width - 0.02, color=color, edgecolor=SURFACE, linewidth=1)
+            ax.text(x, y + 1.5, f"{y:.0f}", ha="center", va="bottom", fontsize=7, color=INK_2)
+    handles = [Patch(color=SERIES[ARM_SLOT.get(arm, i) % len(SERIES)], label=arm) for i, arm in enumerate(arms)]
     ax.set_xticks(range(len(names)), [label for _, label in names], color=INK)
     ax.set_ylim(0, 112)
     ax.set_ylabel("percent of requests", color=INK_2, fontsize=9)
     ax.set_title(title, loc="left", color=INK, fontsize=11)
-    ax.legend(frameon=False, ncol=len(arms), loc="upper left", bbox_to_anchor=(0, -0.08), fontsize=9, labelcolor=INK_2)
+    ax.legend(handles=handles, frameon=False, ncol=len(arms), loc="upper left", bbox_to_anchor=(0, -0.08), fontsize=9, labelcolor=INK_2)
     fig.tight_layout()
     fig.savefig(path, facecolor=SURFACE)
     plt.close(fig)
@@ -264,6 +275,42 @@ def plot_categories(path: Path, metrics: dict[str, dict[str, Any]], title: str) 
     plt.close(fig)
 
 
+FEEDBACK_ARMS = [("P-bare", "bare"), ("P-reason", "reason"), ("P", "hint"), ("B1", "AgentSpec native")]
+
+
+def plot_feedback(path: Path, metrics: dict[str, dict[str, Any]], title: str) -> bool:
+    """G3: recovery and interception on unsafe requests for each feedback mode. False when too few arms ran."""
+    arms = [(arm, label) for arm, label in FEEDBACK_ARMS if arm in metrics]
+    if len(arms) < 2:
+        return False
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(figsize=(8, 4.2), dpi=150)
+    fig.patch.set_facecolor(SURFACE)
+    _style(ax)
+    series = [("recovery", "Recovery (compliant end state after a block)"), ("interception", "Interception")]
+    width = 0.36
+    for k, (key, label) in enumerate(series):
+        xs = [i + (k - 0.5) * width for i in range(len(arms))]
+        values = [100 * (metrics[a][key]["rate"] or 0) for a, _ in arms]
+        bars = ax.bar(xs, values, width=width - 0.03, color=SERIES[k], label=label, edgecolor=SURFACE, linewidth=1)
+        for bar, (arm, _), value in zip(bars, arms, values):
+            m = metrics[arm][key]
+            ax.text(bar.get_x() + bar.get_width() / 2, value + 1.5, f"{m['hits']}/{m['n']}", ha="center", va="bottom", fontsize=7, color=INK_2)
+    ax.set_xticks(range(len(arms)), [f"{arm}\n({label})" for arm, label in arms], color=INK, fontsize=9)
+    ax.set_ylim(0, 112)
+    ax.set_ylabel("percent of unsafe requests", color=INK_2, fontsize=9)
+    ax.set_title(title, loc="left", color=INK, fontsize=11)
+    ax.legend(frameon=False, loc="upper left", bbox_to_anchor=(0, -0.16), ncol=2, fontsize=9, labelcolor=INK_2)
+    fig.tight_layout()
+    fig.savefig(path, facecolor=SURFACE)
+    plt.close(fig)
+    return True
+
+
 def summarize_runs(cfg: Config, run_dirs: list[Path], prefix: str = "phase1") -> list[Path]:
     scenarios = load_scenarios(cfg.path(cfg.run.scenarios_dir))
     violated = {s.id: s.violated_controls for s in scenarios}
@@ -286,4 +333,8 @@ def summarize_runs(cfg: Config, run_dirs: list[Path], prefix: str = "phase1") ->
     plot2 = figures / f"{prefix}_categories.png"
     plot_metrics(plot1, metrics, f"Outcome rates per arm ({model})")
     plot_categories(plot2, metrics, f"Unsafe requests intercepted, per category ({model})")
-    return [csv_path, md_path, json_path, plot1, plot2]
+    outputs = [csv_path, md_path, json_path, plot1, plot2]
+    plot3 = figures / f"{prefix}_feedback.png"
+    if plot_feedback(plot3, metrics, f"G3: feedback mode vs recovery ({model})"):
+        outputs.append(plot3)
+    return outputs
