@@ -16,7 +16,9 @@ llm:
   ollama:
     model: llama3.1:8b
     base_url: http://localhost:11434
-    num_ctx: 16384
+    # 12288 keeps llama3.1:8b fully on an 8 GB GPU. At 16384 part of the model ran on the CPU and prompt
+    # evaluation dropped from about 1500 to 80 tokens per second (measured on an RTX 4060 laptop GPU).
+    num_ctx: 12288
   gemini:
     model: gemini-3.8-flash     # current stable Flash id per ai.google.dev, checked 2026-10-13
     api_key_env: GEMINI_API_KEY
