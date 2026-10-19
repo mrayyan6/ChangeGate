@@ -1,0 +1,55 @@
+2026-10-15 08:44:03 driver started (pid 30696), run id phase1-llama31
+2026-10-15 08:44:03 B0 started
+2026-10-15 08:44:03 P started
+2026-10-15 08:48:59 driver started (pid 30860), run id phase1-llama31
+2026-10-15 08:48:59 B0 started
+2026-10-15 08:56:03 driver started (pid 23632), run id phase1-llama31
+2026-10-15 08:56:03 B0 started
+2026-10-15 09:20:35 B0 finished with exit code 0
+2026-10-15 09:20:35 P started
+2026-10-15 09:47:39 P finished with exit code 0
+2026-10-15 09:47:39 B2 started
+2026-10-15 10:12:22 B2 finished with exit code 0
+2026-10-15 10:12:22 B1 skipped: AgentSpec is not set up (run scripts/setup_agentspec.py)
+2026-10-15 10:12:22 P-reason started (unsafe requests)
+2026-10-15 10:33:07 P-reason finished with exit code 0
+2026-10-15 10:33:07 P-bare started (unsafe requests)
+2026-10-19 13:49:15 driver started (pid 31820), run id phase1-llama31
+2026-10-19 13:49:15 B0 started
+2026-10-19 13:49:20 B0 finished with exit code 0
+2026-10-19 13:49:20 P started
+2026-10-19 13:49:23 P finished with exit code 0
+2026-10-19 13:49:23 B2 started
+2026-10-19 13:49:27 B2 finished with exit code 0
+2026-10-19 13:49:27 B1 skipped: AgentSpec is not set up (run scripts/setup_agentspec.py)
+2026-10-19 13:49:27 P-reason started (unsafe requests)
+2026-10-19 13:49:30 P-reason finished with exit code 0
+2026-10-19 13:49:30 P-bare started (unsafe requests)
+2026-10-19 13:52:03 driver started (pid 1060), run id phase1-llama31
+2026-10-19 13:52:03 B0 started
+2026-10-19 13:52:08 B0 finished with exit code 0
+2026-10-19 13:52:08 P started
+2026-10-19 13:52:12 P finished with exit code 0
+2026-10-19 13:52:12 B2 started
+2026-10-19 13:52:16 B2 finished with exit code 0
+2026-10-19 13:52:16 B1 started
+2026-10-19 14:17:35 P-bare finished with exit code 0
+2026-10-19 14:17:42 eval finished with exit code 0: wrote results/phase1_summary.csv
+wrote results/phase1_summary.md
+wrote results/phase1_metrics.json
+wrote figures/phase1_metrics.png
+wrote figures/phase1_categories.png
+wrote figures/phase1_feedback.png
+2026-10-19 14:17:42 driver done
+2026-10-19 14:36:34 B1 finished with exit code 0
+2026-10-19 14:36:34 P-reason started (unsafe requests)
+2026-10-19 14:36:36 P-reason finished with exit code 0
+2026-10-19 14:36:36 P-bare started (unsafe requests)
+2026-10-19 14:36:38 P-bare finished with exit code 0
+2026-10-19 14:36:39 eval finished with exit code 0: wrote results/phase1_summary.csv
+wrote results/phase1_summary.md
+wrote results/phase1_metrics.json
+wrote figures/phase1_metrics.png
+wrote figures/phase1_categories.png
+wrote figures/phase1_feedback.png
+2026-10-19 14:36:39 driver done
