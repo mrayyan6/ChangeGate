@@ -24,6 +24,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 AGENTSPEC_PARSER = ROOT / "external" / "AgentSpec" / "src" / "spec_lang" / "AgentSpecParser.py"
+AGENTSPEC_GRAMMAR = ROOT / "external" / "AgentSpec" / "src" / "spec_lang" / "AgentSpec.g4"
 
 LANES = [
     [("B0", None), ("B2", None), ("B1", None)],
@@ -35,7 +36,14 @@ SINGLE_LANE = [("B0", None), ("P", None), ("B2", None), ("B1", None), ("P-reason
 
 
 def agentspec_ready() -> bool:
-    return AGENTSPEC_PARSER.exists() and "cg_public_ingress" in AGENTSPEC_PARSER.read_text(encoding="utf-8", errors="ignore")
+    # ANTLR serializes grammar literals into a binary ATN array, not plain text, so the predicate
+    # names never appear in the generated AgentSpecParser.py. Check the patched grammar source instead
+    # (which setup_agentspec.py writes) plus that the parser was regenerated after it.
+    if not (AGENTSPEC_PARSER.exists() and AGENTSPEC_GRAMMAR.exists()):
+        return False
+    if "cg_public_ingress" not in AGENTSPEC_GRAMMAR.read_text(encoding="utf-8", errors="ignore"):
+        return False
+    return AGENTSPEC_PARSER.stat().st_mtime >= AGENTSPEC_GRAMMAR.stat().st_mtime
 
 
 class Driver:
