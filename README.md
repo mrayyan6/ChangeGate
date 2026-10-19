@@ -79,7 +79,11 @@ Design details are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md); the build pl
    ```
 
    For Gemini, copy `.env.example` to `.env` and set `GEMINI_API_KEY`. Model names live in
-   `config/default.yaml` (`gemini-3.8-flash` by default).
+   `config/default.yaml` (`gemini-3.8-flash` by default). Gemini 3 requires a `thought_signature` on
+   function calls across turns, which `langchain-google-genai` 2.1.12 does not preserve; this repo uses its
+   own `changegate/gemini_native.py` wrapper over the `google-genai` SDK instead. A free-tier API key is
+   capped at 20 `gemini-3.8-flash` requests per day, far below what even a two-request smoke run needs; a
+   real experiment needs a billing-enabled key.
 
 5. Optional, for B1: set up AgentSpec (clones it at the pinned commit into `external/`, gitignored, and
    regenerates its parser with the ChangeGate predicates):
