@@ -231,12 +231,12 @@ Commits are small, casual, authored by me, with no co-author trailer.
 
 ## 13. Done when
 
-- [ ] README with Windows setup, run commands and how to reproduce the summary table
-- [ ] Env A, offline plan and ChangeSet diff work
-- [ ] LLM provider wired through config and .env
-- [ ] Tools and PEP work, and every OPA decision is logged
-- [ ] Contracts in changegate/contracts.py with JSON Schemas in schemas/
-- [ ] 40-scenario Phase 1 evaluation set
-- [ ] B0, B2 and P run end to end, with results in results/phase1_summary.md
-- [ ] opa test and pytest pass
-- [ ] History of small, meaningful commits
+- [x] README with Windows setup, run commands and how to reproduce the summary table
+- [x] Env A, offline plan and ChangeSet diff work
+- [x] LLM provider wired through config and .env
+- [x] Tools and PEP work, and every OPA decision is logged
+- [x] Contracts in changegate/contracts.py with JSON Schemas in schemas/
+- [x] 40-scenario Phase 1 evaluation set
+- [x] B0, B2 and P run end to end, with results in results/phase1_summary.md
+- [x] opa test and pytest pass
+- [x] History of small, meaningful commits
