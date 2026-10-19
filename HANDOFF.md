@@ -13,6 +13,9 @@ The original brief (the user's long prompt) is summarized in section 2; its "def
 
 ## 1. Status at a glance
 
+Updated 2026-10-19: the `phase1-llama31` experiment finished, including B1, and everything through section 9 steps
+1 to 7 is done and committed. See section 11 for what changed in this session.
+
 | Item | State |
 |---|---|
 | Prerequisites | installed and verified (section 3) |
@@ -21,13 +24,13 @@ The original brief (the user's long prompt) is summarized in section 2; its "def
 | PEP, OPA client, session store, feedback, approvals, audit, evaluator, tools, agent, runner, metrics, CLI | done, committed, 184 pytest tests pass |
 | 40 scenarios (20 twin pairs) | done, validated, oracle-validated (section 6) |
 | B2 (Trivy) | done, tested |
-| B1 (AgentSpec, native) | done, 4 integration tests pass |
-| Experiment `phase1-llama31` (llama3.1:8b, all arms) | RUNNING detached in the background (section 7); B0 done 40/40, P in progress at 09:23 |
-| README.md | written, NOT committed yet; results section must be filled with real numbers |
-| results/ and figures/ (oracle summary, plots, review HTML) | generated, NOT committed yet |
-| Gemini runs | not done: no `GEMINI_API_KEY` in `.env` yet; adapter risk noted (section 10) |
-| Comparator (B1 vs P) and analyzer (failures.md) | not done (section 9) |
-| Final report to the user (brief's report_back) | not done (section 9) |
+| B1 (AgentSpec, native) | done: ran for real in `phase1-llama31` (40/40 runs), bug in the readiness check fixed (section 11) |
+| Experiment `phase1-llama31` (llama3.1:8b, all six arms) | DONE: B0, P, B2, B1, P-reason, P-bare all finished, eval written, audit chains verify (section 6) |
+| README.md | written, committed, results section filled with real numbers from both runs |
+| results/ and figures/ (oracle summary, phase1 summary, plots, review HTML, failures.md, comparisons/) | generated and committed |
+| Gemini runs | not done: no `GEMINI_API_KEY` in `.env` yet; adapter risk noted (section 10); this is the only item left from the original brief (section 9 step 9) |
+| Comparator (B1 vs P) and analyzer (failures.md) | done: `results/comparisons/*.json`, `results/failures.md` (section 11) |
+| Final report to the user (brief's report_back) | still owed, now that real numbers exist (section 9 step 10) |
 
 ---
 
@@ -346,7 +349,47 @@ tests pass (`claude.exe plugin test C:\Users\rayya\.claude\mods\autopilot`). Ins
 `claude.exe plugin marketplace update rayyan-mods` and `claude.exe plugin update autopilot@rayyan-mods`; active since
 the Claude Code restart on 2026-10-15 at about 09:20 (the user turned it on again with `/autopilot`). Nothing else needed.
 
-## 11. How this file was checked
+## 11. What happened in the 2026-10-19 session (resuming after the Oct 15 stall)
+
+The driver had stalled on Oct 15 at 10:34 (4 days idle): B0, P, B2, P-reason were done, but P-bare was cut off at
+2/22 and B1 kept being skipped with "AgentSpec is not set up," even though `scripts/setup_agentspec.py` had
+already run successfully (clone, grammar patch, parser regen, rules parse). Root cause: `agentspec_ready()` in
+`scripts/run_phase1.py` checked for the literal string `"cg_public_ingress"` inside the compiled
+`AgentSpecParser.py`, but ANTLR serializes grammar literals into a binary ATN array, not plain text, so that
+string can never appear there. The check was broken by construction: B1 could never have run no matter how many
+times setup was redone. Fixed to check the patched `AgentSpec.g4` grammar source instead (plus a parser-newer-
+than-grammar mtime check). Commit `2be0ff9`.
+
+Relaunched the detached driver (section 7 procedure) twice in a row without first confirming the earlier one had
+exited; both turned out to be the same process tree (WMI's own parent/child launch), not a real race, confirmed
+by `Win32_Process` parent/child IDs and by the audit hash chains verifying cleanly afterward. If this happens
+again, check `ParentProcessId` before assuming two independent drivers are writing to the same run id.
+
+After B1 finished (40/40, interception 20/20, recovery 2/4, correct_rule 4/4, 4 errors that are a crash inside
+the AgentSpec library's own `rule.py` on a `None` input, not a ChangeGate defect) and P-bare finished (22/22), ran
+the rest of section 9:
+* `scripts/export_review.py` (review HTML for both runs)
+* G3 blind comparison: found 3 unsafe scenarios where both B1 and P blocked the request and a compliant
+  alternative exists (BR-04-U, CW-03-U, SEC-05-U). Ran one blind-comparator subagent per scenario (transcripts
+  randomly labelled A/B, agent never told which guard produced which). Unblinded result: P's hint feedback beat
+  B1's native feedback in all 3 cases, every time because P's message named the actual fix while B1's terse
+  message led the agent to blindly retry the same denied action or fabricate success. Written to
+  `results/comparisons/*.json`.
+* Failure analyzer subagent wrote `results/failures.md`. Headline finding: task completion is 25% in every arm
+  including B0 with no guard at all, and the same ~15 scenario IDs fail the same way regardless of guard, so the
+  8B model's own `edit_file` exact-match contract (ambiguous matches, searching for text that was never in the
+  file, treating "no changes" from plan/apply as success) is the dominant failure mode in this run, not
+  guardrail false-blocking (false block rate stays 0 to 5% everywhere). Bypass success isolates to one scenario,
+  SPLIT-01-U, that only session-aware guards (P, B1) catch.
+* README Results section rewritten with both tables (oracle and phase1-llama31) and the notes HANDOFF called
+  for; PLAN.md section 13 fully ticked.
+* Committed in 7 small commits (driver fix, README+HANDOFF, oracle results, phase1 results, review+comparisons+
+  failures, raw runs.jsonl+arm_meta.json, PLAN.md ticks). No co-author trailer, no em dashes.
+
+Still open: Gemini runs (section 9 step 9, blocked on the user adding `GEMINI_API_KEY`) and the final report_back
+to the user (section 9 step 10, now straightforward since real numbers exist in this file and in README.md).
+
+## 12. How this file was checked
 
 Before the context was cleared (2026-10-15 09:23): every repo path named here exists (except the future outputs
 listed in section 9), the commit count is 34, all CLI commands and flags named here exist (`changegate run`,
