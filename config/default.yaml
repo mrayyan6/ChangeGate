@@ -26,6 +26,8 @@ llm:
   prices:
     llama3.1:8b: {input: 0.0, output: 0.0}
     llama3.2:3b: {input: 0.0, output: 0.0}
+    # Introductory pricing through 2026-12-31 per ai.google.dev, checked 2026-10-13 (then $1.50 / $7.50).
+    gemini-3.8-flash: {input: 0.75, output: 3.75}
 
 terraform:
   binary: terraform

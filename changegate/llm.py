@@ -177,14 +177,13 @@ def build_chat_model(cfg: Config) -> BaseChatModel:
                 f"llm.provider is gemini but {cfg.llm.gemini.api_key_env} is not set. Add it to .env "
                 "(see .env.example) or run with --provider ollama."
             )
-        from langchain_google_genai import ChatGoogleGenerativeAI
+        from changegate.gemini_native import ChatGeminiNative
 
-        return ChatGoogleGenerativeAI(
+        return ChatGeminiNative(
             model=cfg.llm.gemini.model,
-            google_api_key=key,
+            api_key=key,
             temperature=cfg.llm.temperature,
-            max_retries=3,
-            timeout=cfg.llm.request_timeout_s,
+            timeout_s=cfg.llm.request_timeout_s,
         )
     if provider == "fake":
         return ScriptedChatModel(script=[])
