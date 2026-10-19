@@ -21,14 +21,14 @@ Updated 2026-10-19: the `phase1-llama31` experiment finished, including B1, and 
 | Prerequisites | installed and verified (section 3) |
 | Contracts, schemas, Env A, offline plan, ChangeSet, HCL fallback | done, committed, tested |
 | Policies (6 Rego files + main + lib + data.json) with opa tests | done, 58/58 `opa test` pass, `opa check --strict` clean |
-| PEP, OPA client, session store, feedback, approvals, audit, evaluator, tools, agent, runner, metrics, CLI | done, committed, 184 pytest tests pass |
+| PEP, OPA client, session store, feedback, approvals, audit, evaluator, tools, agent, runner, metrics, CLI | done, committed, 187 pytest tests pass |
 | 40 scenarios (20 twin pairs) | done, validated, oracle-validated (section 6) |
 | B2 (Trivy) | done, tested |
 | B1 (AgentSpec, native) | done: ran for real in `phase1-llama31` (40/40 runs), bug in the readiness check fixed (section 11) |
 | Experiment `phase1-llama31` (llama3.1:8b, all six arms) | DONE: B0, P, B2, B1, P-reason, P-bare all finished, eval written, audit chains verify (section 6) |
 | README.md | written, committed, results section filled with real numbers from both runs |
 | results/ and figures/ (oracle summary, phase1 summary, plots, review HTML, failures.md, comparisons/) | generated and committed |
-| Gemini runs | not done: no `GEMINI_API_KEY` in `.env` yet; adapter risk noted (section 10); this is the only item left from the original brief (section 9 step 9) |
+| Gemini runs | key added; the predicted `thought_signature` adapter risk (section 8) was real and is now fixed with a native wrapper (section 12); blocked now on the free tier's 20-requests-per-day quota, needs a paid-tier key |
 | Comparator (B1 vs P) and analyzer (failures.md) | done: `results/comparisons/*.json`, `results/failures.md` (section 11) |
 | Final report to the user (brief's report_back) | still owed, now that real numbers exist (section 9 step 10) |
 
@@ -386,10 +386,56 @@ the rest of section 9:
 * Committed in 7 small commits (driver fix, README+HANDOFF, oracle results, phase1 results, review+comparisons+
   failures, raw runs.jsonl+arm_meta.json, PLAN.md ticks). No co-author trailer, no em dashes.
 
-Still open: Gemini runs (section 9 step 9, blocked on the user adding `GEMINI_API_KEY`) and the final report_back
-to the user (section 9 step 10, now straightforward since real numbers exist in this file and in README.md).
+Still open: Gemini runs (now blocked on a different thing than before, see below) and the final report_back to
+the user (section 9 step 10, now straightforward since real numbers exist in this file and in README.md).
 
-## 12. How this file was checked
+## 12. Gemini: thought_signature fixed, but the free tier quota blocks the real run
+
+The user added `GEMINI_API_KEY` to `.env`. `llm-check --provider gemini` worked once for a single tool call
+with the existing `ChatGoogleGenerativeAI` (langchain-google-genai 2.1.12), but a 2-request smoke run
+(`changegate run --arms P -s SEC-01-U -s SEC-01-S --provider gemini`) reproduced exactly the risk noted in
+section 8: every run errored with `400 Function call is missing a thought_signature in functionCall parts`
+on the second tool call. `gemini-2.5-flash` is not a usable fallback either: this API key gets
+`404 This model is no longer available to new users`.
+
+Built option (a) from section 8: `changegate/gemini_native.py`, a `ChatGeminiNative(BaseChatModel)` on top of
+the `google-genai` SDK directly (added to `pyproject.toml` dependencies, `google-genai==1.75.0` installed).
+It stores each response's raw `Part` list (`model_dump(mode="json")`, so `thought_signature` bytes survive as
+base64) in `AIMessage.additional_kwargs["gemini_parts"]`, and on the next turn replays those raw parts
+verbatim instead of reconstructing the request from LangChain's `tool_calls` field (which is what drops
+`thought_signature`). Verified by hand with the raw SDK before writing the wrapper: a two-turn tool call
+with the model's own `Content` object reused as history produces no error and the second turn's response
+still carries a fresh `thought_signature`. `changegate/llm.py` `build_chat_model` now returns
+`ChatGeminiNative` for the `gemini` provider instead of `ChatGoogleGenerativeAI`.
+Added `tests/test_gemini_native.py` (3 tests, offline, no network): tool binding produces correct
+`FunctionDeclaration`s, an `AIMessage` carrying stored `gemini_parts` round-trips its `thought_signature`
+byte for byte, and an `AIMessage` without stored parts (for example one built for a nudge) falls back to
+reconstructing from `tool_calls` with no signature. All 187 pytest tests pass (184 before plus these 3).
+Added Gemini pricing to `config/default.yaml` (`gemini-3.8-flash: {input: 0.75, output: 3.75}` per 1M tokens,
+introductory price through 2026-12-31 per ai.google.dev, checked 2026-10-13).
+
+The wrapper itself could not be verified against a live multi-turn run: while testing it (`llm-check`, a few
+raw SDK calls, a couple of smoke runs), the free tier's daily quota for `gemini-3.8-flash` was exhausted
+(`429 RESOURCE_EXHAUSTED`, `GenerateRequestsPerDayPerProjectPerModel-FreeTier`, limit 20 requests per day,
+reported retry delay about 15 hours from 2026-10-19 around 15:00 local time). This quota (20 requests per
+day) is far too small for even the 2-request smoke run end to end (each request is roughly 12 LLM calls, one
+per agent step), let alone the full 40-scenario, 6-arm experiment (thousands of calls). Running the real
+Gemini experiment needs a billing-enabled (paid tier) API key, not just a key; the free tier cannot do it at
+any time of day, this is not a transient rate limit.
+
+Next steps once the user has a paid-tier key or the current key's project has billing enabled:
+1. Re-run the 2-request smoke run first (`changegate run --arms P -s SEC-01-U -s SEC-01-S --provider gemini
+   --run-id gemini-smoke`) to confirm the wrapper handles a real multi-turn run end to end, delete
+   `results/runs/gemini-smoke` before committing (it is a throwaway check).
+2. If it passes, `scripts\run_phase1.py --run-id phase1-gemini --provider gemini --lanes 2` (two lanes are
+   fine for Gemini, unlike Ollama: it is not a single local server).
+3. `python -m changegate eval --run-id phase1-gemini --prefix phase1` overwrites `results/phase1_summary.*`;
+   the llama3.1:8b table from this session is already committed under those same paths, so copy it to another
+   prefix first (for example `phase1_llama31`) if both tables should stay in `results/`.
+4. Update README's phase 1 results section with the Gemini table as the reported number, keeping the
+   llama3.1:8b table as a secondary comparison or moving it to a notes section.
+
+## 13. How this file was checked
 
 Before the context was cleared (2026-10-15 09:23): every repo path named here exists (except the future outputs
 listed in section 9), the commit count is 34, all CLI commands and flags named here exist (`changegate run`,
