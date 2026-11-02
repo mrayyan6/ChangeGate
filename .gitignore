@@ -44,3 +44,6 @@ Thumbs.db
 
 # Local assistant settings (machine specific)
 .claude/
+
+# AI assistant notes, handoffs and plans (kept local only)
+details/
