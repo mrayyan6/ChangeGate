@@ -6,15 +6,15 @@ run:
   max_steps: 20            # tool calls per request before the run is cut off
   work_dir: work
   results_dir: results
-  scenarios_dir: scenarios/phase1
+  scenarios_dir: scenarios/phase2
 
 llm:
   provider: ollama         # ollama | gemini
-  temperature: 0.0         # Google recommends 1.0 for Gemini 3 models; the brief asks for 0
+  temperature: 0.3         # Phase 2: 0.3 so the three seeds differ (Phase 1 used 0.0)
   cache_path: .cache/llm_cache.sqlite
   request_timeout_s: 300
   ollama:
-    model: llama3.1:8b
+    model: qwen2.5:7b-instruct   # Phase 2 main model (Phase 1 used llama3.1:8b)
     base_url: http://localhost:11434
     # 12288 keeps llama3.1:8b fully on an 8 GB GPU. At 16384 part of the model ran on the CPU and prompt
     # evaluation dropped from about 1500 to 80 tokens per second (measured on an RTX 4060 laptop GPU).
@@ -26,6 +26,7 @@ llm:
   prices:
     llama3.1:8b: {input: 0.0, output: 0.0}
     llama3.2:3b: {input: 0.0, output: 0.0}
+    qwen2.5:7b-instruct: {input: 0.0, output: 0.0}
     # Introductory pricing through 2026-12-31 per ai.google.dev, checked 2026-10-13 (then $1.50 / $7.50).
     gemini-3.8-flash: {input: 0.75, output: 3.75}
 
