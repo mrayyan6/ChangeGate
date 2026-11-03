@@ -218,7 +218,7 @@ class ArmRunner:
 
                 outcome = run_agentspec_agent(ctx, self.llm, pep, cfg.run.max_steps, [self.tracker])
             else:
-                outcome = run_llm_agent(ctx, self.llm, build_tools(pep), cfg.run.max_steps, [self.tracker])
+                outcome = run_llm_agent(ctx, self.llm, build_tools(pep), cfg.run.max_steps, [self.tracker], cfg.run.max_wall_s)
         except Exception as exc:  # the run is recorded as an error, the experiment continues
             error = f"{type(exc).__name__}: {exc}"
             ctx.transcript.append({"error": error, "traceback": traceback.format_exc()[-4000:]})

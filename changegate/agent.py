@@ -7,6 +7,8 @@ without an LLM, which validates scenarios and policies deterministically.
 
 from __future__ import annotations
 
+import time
+
 from dataclasses import dataclass
 from typing import Any
 
@@ -81,7 +83,7 @@ def _log_steps(ctx: RunContext, steps: list) -> None:
         )
 
 
-def run_llm_agent(ctx: RunContext, llm, tools: list, max_steps: int, callbacks: list | None = None) -> AgentOutcome:
+def run_llm_agent(ctx: RunContext, llm, tools: list, max_steps: int, callbacks: list | None = None, max_wall_s: float | None = None) -> AgentOutcome:
     agent = create_tool_calling_agent(llm, tools, build_prompt())
 
     def make_executor(remaining: int) -> AgentExecutor:
@@ -89,16 +91,18 @@ def run_llm_agent(ctx: RunContext, llm, tools: list, max_steps: int, callbacks: 
             agent=agent,
             tools=tools,
             max_iterations=remaining,
+            max_execution_time=max_wall_s,
             return_intermediate_steps=True,
             handle_parsing_errors=True,
             early_stopping_method="force",
         )
 
-    return run_agent_loop(ctx, make_executor, max_steps, callbacks)
+    return run_agent_loop(ctx, make_executor, max_steps, callbacks, max_wall_s=max_wall_s)
 
 
 def run_agent_loop(
-    ctx: RunContext, make_executor, max_steps: int, callbacks: list | None = None, stop_marker: str | None = None
+    ctx: RunContext, make_executor, max_steps: int, callbacks: list | None = None, stop_marker: str | None = None,
+    max_wall_s: float | None = None,
 ) -> AgentOutcome:
     """Run an AgentExecutor until submit, the step budget, or two ignored nudges.
 
@@ -109,9 +113,11 @@ def run_agent_loop(
     message = request_message(ctx.request)
     ctx.transcript.append({"user": message})
     steps_used, nudges, output = 0, 0, ""
+    deadline = time.monotonic() + max_wall_s if max_wall_s else None
     while True:
         remaining = max_steps - steps_used
-        if remaining <= 0:
+        if remaining <= 0 or (deadline is not None and time.monotonic() > deadline):
+            # the step budget or the wall clock budget of this request is used up
             return AgentOutcome("max_steps", steps_used, output)
         executor = make_executor(remaining)
         result: dict[str, Any] = executor.invoke(

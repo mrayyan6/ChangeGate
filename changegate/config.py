@@ -29,6 +29,7 @@ class _Section(BaseModel):
 class RunConfig(_Section):
     seed: int = 7
     max_steps: int = 20
+    max_wall_s: int = 600       # wall clock cap per request, so one stalled model call cannot block a run
     work_dir: str = "work"
     results_dir: str = "results"
     scenarios_dir: str = "scenarios/phase1"
