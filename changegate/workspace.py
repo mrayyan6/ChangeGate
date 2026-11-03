@@ -226,7 +226,7 @@ def _apply_edit(root: Path, rel: str, old: str, new: str, *, tolerant: bool) -> 
         path.write_text(text.replace(old, new, 1), encoding="utf-8", newline="\n")
         return EditResult(True, f"Edited {rel}.")
     if count > 1:
-        return EditResult(False, f"old text matches {count} places in {rel}; include more surrounding lines.")
+        return EditResult(False, f"old text matches {count} places in {rel}{_match_lines(text, old)}; include more surrounding lines.")
     if not tolerant:
         return EditResult(False, f"old text not found in {rel}")
     return _fuzzy_edit(path, rel, text, old, new)
@@ -257,10 +257,30 @@ def _fuzzy_edit(path: Path, rel: str, text: str, old: str, new: str) -> EditResu
         path.write_text("\n".join(file_lines), encoding="utf-8", newline="\n")
         return EditResult(True, f"Edited {rel} (matched ignoring whitespace).", fuzzy=True)
     if len(hits) > 1:
-        return EditResult(False, f"old text matches {len(hits)} places in {rel}; include more surrounding lines.")
+        where = ", ".join(f"line {h + 1}" for h in hits[:5])
+        return EditResult(False, f"old text matches {len(hits)} places in {rel} (starting at {where}); include more surrounding lines.")
     first = old_lines[0].strip()
     close = difflib.get_close_matches(first, [ln.strip() for ln in file_lines if ln.strip()], n=3, cutoff=0.5)
     hint = ""
     if close:
         hint = " Closest lines in the file: " + " | ".join(close)
+        # show where the best line is, with its neighbours, so the next attempt can copy the real text
+        best = close[0]
+        for i, ln in enumerate(file_lines):
+            if ln.strip() == best:
+                lo, hi = max(0, i - 1), min(len(file_lines), i + len(old_lines) + 1)
+                hint += f"{chr(10)}File text around line {i + 1}:{chr(10)}" + chr(10).join(file_lines[lo:hi])
+                break
     return EditResult(False, f"old text not found in {rel}. Read the file again and copy the text exactly.{hint}")
+
+
+def _match_lines(text: str, old: str) -> str:
+    """Line numbers where an exact ``old`` text starts, for the ambiguous match message."""
+    lines, pos = [], 0
+    while len(lines) < 5:
+        pos = text.find(old, pos)
+        if pos < 0:
+            break
+        lines.append(text.count(chr(10), 0, pos) + 1)
+        pos += max(1, len(old))
+    return " (starting at " + ", ".join(f"line {n}" for n in lines) + ")" if lines else ""
