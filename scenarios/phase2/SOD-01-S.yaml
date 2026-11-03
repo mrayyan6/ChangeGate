@@ -17,6 +17,7 @@ assertions:
   address: aws_iam_instance_profile.*
   path: name
   value: fintech-prod-app-profile
+  present: true
 oracle:
   edits:
   - path: app_profile.tf

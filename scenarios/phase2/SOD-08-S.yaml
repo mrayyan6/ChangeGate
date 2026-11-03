@@ -17,6 +17,7 @@ assertions:
   address: aws_iam_role.*
   path: name
   value: fintech-prod-batch-runner
+  present: true
 oracle:
   edits:
   - path: batch_runner.tf

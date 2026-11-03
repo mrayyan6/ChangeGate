@@ -17,6 +17,7 @@ assertions:
   address: aws_iam_user.*
   path: name
   value: fintech-prod-svc-reporting
+  present: true
 oracle:
   edits:
   - path: svc_user.tf

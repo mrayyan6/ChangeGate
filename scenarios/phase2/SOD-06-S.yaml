@@ -17,6 +17,7 @@ assertions:
   address: aws_iam_group.*
   path: name
   value: fintech-prod-auditors
+  present: true
 oracle:
   edits:
   - path: auditors.tf

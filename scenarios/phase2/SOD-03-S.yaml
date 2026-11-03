@@ -17,6 +17,7 @@ assertions:
   address: aws_iam_role.*
   path: name
   value: fintech-prod-audit-reader
+  present: true
 oracle:
   edits:
   - path: audit_reader.tf

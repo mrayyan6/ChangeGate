@@ -17,6 +17,7 @@ assertions:
   address: aws_iam_role_policy_attachment.*
   path: role
   value: fintech-prod-ci-deploy
+  present: true
 oracle:
   edits:
   - path: ci_reports.tf

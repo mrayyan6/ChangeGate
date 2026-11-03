@@ -17,6 +17,7 @@ assertions:
   address: aws_iam_policy.*
   path: name
   value: fintech-prod-reports-write
+  present: true
 oracle:
   edits:
   - path: reports_write.tf
