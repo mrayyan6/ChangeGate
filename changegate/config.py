@@ -32,6 +32,7 @@ class RunConfig(_Section):
     work_dir: str = "work"
     results_dir: str = "results"
     scenarios_dir: str = "scenarios/phase1"
+    split_file: str = "scenarios/phase2_split.json"
 
 
 class OllamaConfig(_Section):
@@ -96,9 +97,15 @@ class AgentConfig(_Section):
     id: str = "changegate-agent"
 
 
+ABLATABLE = ("security", "blast_radius", "change_window", "sod_approval", "protected_paths", "cumulative")
+
+
 class ArmConfig(_Section):
     guard: GuardKind
     feedback: FeedbackMode
+    # E5 ablations of the opa guard: policy families whose findings are dropped, and a gate without session memory.
+    ablate: list[str] = Field(default_factory=list)
+    no_session_store: bool = False
 
 
 class Config(_Section):

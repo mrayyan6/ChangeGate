@@ -47,6 +47,7 @@ def run(
     parallel: int = typer.Option(1, help="Run several arms at once as separate processes."),
     max_steps: Optional[int] = typer.Option(None, help="Tool calls per request."),
     resume: bool = typer.Option(False, help="Skip sessions that already have results in this run id."),
+    split: Optional[str] = typer.Option(None, help="Only scenarios of this split (dev or test) from run.split_file."),
     config: Optional[Path] = typer.Option(None, help="Config file (default config/default.yaml)."),
     set_: Optional[list[str]] = typer.Option(None, "--set", help="Config override key.path=value; repeatable."),
 ):
@@ -59,6 +60,10 @@ def run(
     for name in arm_names:
         cfg.arm(name)
     all_scenarios = load_scenarios(cfg.path(cfg.run.scenarios_dir))
+    if split:
+        from changegate.scenarios import apply_split
+
+        all_scenarios = apply_split(all_scenarios, cfg.path(cfg.run.split_file), split)
     chosen = select(all_scenarios, scenario, label, category, limit)
     if not chosen:
         typer.echo("No scenarios selected.")
@@ -164,13 +169,18 @@ def verify_audit_cmd(paths: Optional[list[Path]] = typer.Argument(None, help="Au
 
 
 @app.command("validate-scenarios")
-def validate_scenarios_cmd(config: Optional[Path] = typer.Option(None), partial: bool = typer.Option(False, help="Do not require the full 40 scenario set.")):
+def validate_scenarios_cmd(
+    config: Optional[Path] = typer.Option(None),
+    partial: bool = typer.Option(False, help="Do not require the full 40 scenario set."),
+    expect_total: Optional[int] = typer.Option(None, help="Require exactly this many scenarios (for the Phase 2 set)."),
+    set_: Optional[list[str]] = typer.Option(None, "--set", help="Config override key.path=value; repeatable."),
+):
     """Check scenario files for schema errors and twin pair consistency."""
     from changegate.scenarios import load_scenarios, validate
 
-    cfg = load_config(config)
+    cfg = load_config(config, set_ or [])
     scenarios = load_scenarios(cfg.path(cfg.run.scenarios_dir))
-    problems = validate(scenarios, expect_full_set=not partial)
+    problems = validate(scenarios, expect_full_set=not partial and expect_total is None, expected_total=expect_total)
     for p in problems:
         typer.echo(f"problem: {p}")
     labels = {lab: sum(s.label == lab for s in scenarios) for lab in ("safe", "unsafe")}

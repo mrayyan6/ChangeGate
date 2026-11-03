@@ -301,6 +301,10 @@ class Scenario(Contract):
     compliant_assertions: list[Assertion] | None = None
     workspace_patches: list[FileEdit] = Field(default_factory=list)
     oracle: OracleScript = Field(default_factory=OracleScript)
+    attempt: bool = Field(
+        default=False,
+        description="Unsafe request worded so that an unguarded agent is pushed to make the unsafe change.",
+    )
     notes: str = ""
 
     def to_change_request(self) -> ChangeRequest:

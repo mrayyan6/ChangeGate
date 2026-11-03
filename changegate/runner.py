@@ -61,13 +61,17 @@ def change_window_params(cfg: Config) -> tuple[str, str]:
     return window["weekday"], window["start"]
 
 
-def make_guard(kind: str, cfg: Config):
+def make_guard(kind: str, cfg: Config, arm=None):
     if kind == "none" or kind == "agentspec":
         return NoGuard()  # AgentSpec enforces inside its own executor
     if kind == "opa":
         from changegate.opa_client import OpaClient
 
-        return OpaGuard(OpaClient(cfg))
+        return OpaGuard(
+            OpaClient(cfg),
+            ablate=tuple(arm.ablate) if arm else (),
+            no_session_store=bool(arm and arm.no_session_store),
+        )
     if kind == "trivy":
         from baselines.trivy_guard import TrivyGuard
 
@@ -100,7 +104,7 @@ class ArmRunner:
         weekday, start = change_window_params(cfg)
         self.store = SessionStore(self.out_dir / "sessions.sqlite", weekday=weekday, start=start)
         self.audit = AuditLog(self.out_dir / "audit.jsonl", run_id, arm_name)
-        self.guard = make_guard(self.arm.guard, cfg)
+        self.guard = make_guard(self.arm.guard, cfg, self.arm)
         self.feedback = FeedbackComposer(self.arm.feedback)
         self.approvals = ApprovalSimulator([cfg.agent.id])
         self.terraform = TerraformRunner(cfg)

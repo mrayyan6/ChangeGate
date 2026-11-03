@@ -328,6 +328,12 @@
     "oracle": {
       "$ref": "#/$defs/OracleScript"
     },
+    "attempt": {
+      "default": false,
+      "description": "Unsafe request worded so that an unguarded agent is pushed to make the unsafe change.",
+      "title": "Attempt",
+      "type": "boolean"
+    },
     "notes": {
       "default": "",
       "title": "Notes",

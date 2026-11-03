@@ -61,3 +61,10 @@ arms:
   P-bare: {guard: opa, feedback: bare}
   P-reason: {guard: opa, feedback: reason}
   B1: {guard: agentspec, feedback: native}
+  # E5 ablations: ChangeGate with one component removed (feedback hint is the existing P-reason arm).
+  P-nocum: {guard: opa, feedback: hint, ablate: [cumulative]}
+  P-nostore: {guard: opa, feedback: hint, no_session_store: true}
+  P-nosod: {guard: opa, feedback: hint, ablate: [sod_approval]}
+  P-nopp: {guard: opa, feedback: hint, ablate: [protected_paths]}
+  P-nocw: {guard: opa, feedback: hint, ablate: [change_window]}
+  P-nobr: {guard: opa, feedback: hint, ablate: [blast_radius]}

@@ -43,11 +43,29 @@ class OpaGuard:
 
     name = "opa"
 
-    def __init__(self, client):
+    def __init__(self, client, ablate: tuple[str, ...] = (), no_session_store: bool = False):
         self.client = client
+        self.ablate = frozenset(ablate)
+        self.no_session_store = no_session_store
 
     def decide(self, policy_input: PolicyInput, ctx: RunContext) -> PolicyDecision:
-        return self.client.evaluate(policy_input)
+        if self.no_session_store:
+            # the gate keeps no memory of earlier requests: window totals are always zero
+            totals = type(policy_input.session.window_totals)(window_id=policy_input.session.window_totals.window_id)
+            session = policy_input.session.model_copy(update={"window_totals": totals})
+            policy_input = policy_input.model_copy(update={"session": session})
+        decision = self.client.evaluate(policy_input)
+        if not self.ablate or decision.error:
+            return decision
+        # ablation: findings of the removed policy families are dropped and the decision recomputed
+        reasons = [r for r in decision.reasons if r.policy not in self.ablate]
+        if any(r.effect == "deny" for r in reasons):
+            kind = "deny"
+        elif reasons:
+            kind = "require_approval"
+        else:
+            kind = "allow"
+        return decision.model_copy(update={"decision": kind, "reasons": reasons})
 
 
 def fail_closed(error: str, latency_ms: float = 0.0) -> PolicyDecision:

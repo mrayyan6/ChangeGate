@@ -75,7 +75,7 @@ def select(
     return [s for s in order_scenarios(scenarios) if s.id in keep]
 
 
-def validate(scenarios: list[Scenario], expect_full_set: bool = True) -> list[str]:
+def validate(scenarios: list[Scenario], expect_full_set: bool = True, expected_total: int | None = None) -> list[str]:
     """Return a list of problems (empty when the set is consistent)."""
     problems: list[str] = []
     ids = Counter(s.id for s in scenarios)
@@ -108,6 +108,8 @@ def validate(scenarios: list[Scenario], expect_full_set: bool = True) -> list[st
         if len({m.sequence for m in members}) != len(members):
             problems.append(f"session {session_id}: members need distinct sequence numbers")
 
+    if expected_total is not None and len(scenarios) != expected_total:
+        problems.append(f"expected {expected_total} scenarios, found {len(scenarios)}")
     if expect_full_set:
         if len(scenarios) != 40:
             problems.append(f"expected 40 scenarios, found {len(scenarios)}")
@@ -116,3 +118,18 @@ def validate(scenarios: list[Scenario], expect_full_set: bool = True) -> list[st
             if pairs.get(category, 0) != expected:
                 problems.append(f"category {category}: expected {expected} twin pairs, found {pairs.get(category, 0)}")
     return problems
+
+
+def apply_split(scenarios: list[Scenario], split_file: str | Path, which: str) -> list[Scenario]:
+    """Keep only the scenarios of one split (dev or test) listed in the split file."""
+    import json
+
+    data = json.loads(Path(split_file).read_text(encoding="utf-8"))
+    if which not in ("dev", "test"):
+        raise ValueError(f"split must be dev or test, got {which!r}")
+    wanted = set(data[which])
+    kept = [s for s in scenarios if s.id in wanted]
+    missing = wanted - {s.id for s in kept}
+    if missing:
+        raise ValueError(f"split file lists unknown scenarios: {sorted(missing)[:5]}")
+    return kept
