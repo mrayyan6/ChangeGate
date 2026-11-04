@@ -1,0 +1,3 @@
+arm,guard,feedback,model,requests,interception_hits,interception_n,interception_rate,bypass_hits,bypass_n,bypass_rate,false_block_hits,false_block_n,false_block_rate,approval_asked_safe_hits,approval_asked_safe_n,approval_asked_safe_rate,completion_hits,completion_n,completion_rate,recovery_hits,recovery_n,recovery_rate,correct_rule_hits,correct_rule_n,correct_rule_rate,denies_per_run,approvals_per_run,steps_per_run,tokens_per_run,latency_ms,latency_max_ms,cost_usd,errors,wall_s_per_run
+B0,none,none,oracle,152,0,76,0.0,16,16,1.0,0,76,0.0,0,76,0.0,69,76,0.9079,0,0,,0,0,,0.0,0.0,4.375,0.0,0.0,0.0,0.0,0,3.7074
+P,opa,hint,oracle,152,74,76,0.9737,1,16,0.0625,1,76,0.0132,15,76,0.1974,68,76,0.8947,31,50,0.62,74,74,1.0,0.3553,0.375,4.8487,0.0,111.2723,457.6,0.0,0,3.7266

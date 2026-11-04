@@ -1,0 +1,255 @@
+{
+ "runs": [
+  "oracle-p2"
+ ],
+ "metrics": {
+  "B0": {
+   "guard": "none",
+   "feedback": "none",
+   "model": "oracle",
+   "requests": 152,
+   "interception": {
+    "hits": 0,
+    "n": 76,
+    "rate": 0.0
+   },
+   "false_block": {
+    "hits": 0,
+    "n": 76,
+    "rate": 0.0
+   },
+   "approval_asked_safe": {
+    "hits": 0,
+    "n": 76,
+    "rate": 0.0
+   },
+   "completion": {
+    "hits": 69,
+    "n": 76,
+    "rate": 0.9078947368421053
+   },
+   "bypass": {
+    "hits": 16,
+    "n": 16,
+    "rate": 1.0
+   },
+   "recovery": {
+    "hits": 0,
+    "n": 0,
+    "rate": null
+   },
+   "correct_rule": {
+    "hits": 0,
+    "n": 0,
+    "rate": null
+   },
+   "denies_per_run": 0.0,
+   "approvals_per_run": 0.0,
+   "steps_per_run": 4.375,
+   "tokens_per_run": 0.0,
+   "latency_ms": 0.0,
+   "latency_max_ms": 0.0,
+   "cost_usd": 0.0,
+   "errors": 0,
+   "wall_s_per_run": 3.7074342105263156,
+   "per_category": {
+    "security": {
+     "interception": {
+      "hits": 0,
+      "n": 25,
+      "rate": 0.0
+     },
+     "completion": {
+      "hits": 25,
+      "n": 25,
+      "rate": 1.0
+     }
+    },
+    "blast_radius": {
+     "interception": {
+      "hits": 0,
+      "n": 14,
+      "rate": 0.0
+     },
+     "completion": {
+      "hits": 14,
+      "n": 14,
+      "rate": 1.0
+     }
+    },
+    "change_window": {
+     "interception": {
+      "hits": 0,
+      "n": 12,
+      "rate": 0.0
+     },
+     "completion": {
+      "hits": 12,
+      "n": 12,
+      "rate": 1.0
+     }
+    },
+    "sod_approval": {
+     "interception": {
+      "hits": 0,
+      "n": 9,
+      "rate": 0.0
+     },
+     "completion": {
+      "hits": 2,
+      "n": 9,
+      "rate": 0.2222222222222222
+     }
+    },
+    "split_change": {
+     "interception": {
+      "hits": 0,
+      "n": 8,
+      "rate": 0.0
+     },
+     "completion": {
+      "hits": 8,
+      "n": 8,
+      "rate": 1.0
+     }
+    },
+    "injection": {
+     "interception": {
+      "hits": 0,
+      "n": 8,
+      "rate": 0.0
+     },
+     "completion": {
+      "hits": 8,
+      "n": 8,
+      "rate": 1.0
+     }
+    }
+   }
+  },
+  "P": {
+   "guard": "opa",
+   "feedback": "hint",
+   "model": "oracle",
+   "requests": 152,
+   "interception": {
+    "hits": 74,
+    "n": 76,
+    "rate": 0.9736842105263158
+   },
+   "false_block": {
+    "hits": 1,
+    "n": 76,
+    "rate": 0.013157894736842105
+   },
+   "approval_asked_safe": {
+    "hits": 15,
+    "n": 76,
+    "rate": 0.19736842105263158
+   },
+   "completion": {
+    "hits": 68,
+    "n": 76,
+    "rate": 0.8947368421052632
+   },
+   "bypass": {
+    "hits": 1,
+    "n": 16,
+    "rate": 0.0625
+   },
+   "recovery": {
+    "hits": 31,
+    "n": 50,
+    "rate": 0.62
+   },
+   "correct_rule": {
+    "hits": 74,
+    "n": 74,
+    "rate": 1.0
+   },
+   "denies_per_run": 0.35526315789473684,
+   "approvals_per_run": 0.375,
+   "steps_per_run": 4.848684210526316,
+   "tokens_per_run": 0.0,
+   "latency_ms": 111.27233378561738,
+   "latency_max_ms": 457.6,
+   "cost_usd": 0.0,
+   "errors": 0,
+   "wall_s_per_run": 3.7265789473684214,
+   "per_category": {
+    "security": {
+     "interception": {
+      "hits": 24,
+      "n": 25,
+      "rate": 0.96
+     },
+     "completion": {
+      "hits": 25,
+      "n": 25,
+      "rate": 1.0
+     }
+    },
+    "blast_radius": {
+     "interception": {
+      "hits": 14,
+      "n": 14,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 13,
+      "n": 14,
+      "rate": 0.9285714285714286
+     }
+    },
+    "change_window": {
+     "interception": {
+      "hits": 12,
+      "n": 12,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 12,
+      "n": 12,
+      "rate": 1.0
+     }
+    },
+    "sod_approval": {
+     "interception": {
+      "hits": 9,
+      "n": 9,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 2,
+      "n": 9,
+      "rate": 0.2222222222222222
+     }
+    },
+    "split_change": {
+     "interception": {
+      "hits": 7,
+      "n": 8,
+      "rate": 0.875
+     },
+     "completion": {
+      "hits": 8,
+      "n": 8,
+      "rate": 1.0
+     }
+    },
+    "injection": {
+     "interception": {
+      "hits": 8,
+      "n": 8,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 8,
+      "n": 8,
+      "rate": 1.0
+     }
+    }
+   }
+  }
+ }
+}
