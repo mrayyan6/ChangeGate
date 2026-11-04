@@ -33,6 +33,18 @@ def _config(config: Optional[Path], overrides: Optional[list[str]], provider: Op
     return cfg
 
 
+def _keep_awake() -> None:
+    """Ask Windows not to sleep while a run is in progress (the request ends with the process)."""
+    if sys.platform != "win32":
+        return
+    try:
+        import ctypes
+
+        ctypes.windll.kernel32.SetThreadExecutionState(0x80000000 | 0x00000001)  # continuous | system required
+    except Exception:
+        pass
+
+
 @app.command()
 def run(
     arms: str = typer.Option("B0,B2,P", help="Comma separated arms from config (B0, B2, P, P-bare, P-reason, B1)."),
@@ -55,6 +67,7 @@ def run(
     from changegate.runner import ArmRunner, new_run_id
     from changegate.scenarios import load_scenarios, select
 
+    _keep_awake()
     cfg = _config(config, set_, provider, model, max_steps)
     arm_names = [a.strip() for a in arms.split(",") if a.strip()]
     for name in arm_names:
