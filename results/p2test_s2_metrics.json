@@ -1,0 +1,1123 @@
+{
+ "runs": [
+  "p2-test-s2"
+ ],
+ "metrics": {
+  "B0": {
+   "guard": "none",
+   "feedback": "none",
+   "model": "qwen2.5:7b-instruct",
+   "requests": 102,
+   "interception": {
+    "hits": 23,
+    "n": 51,
+    "rate": 0.45098039215686275
+   },
+   "false_block": {
+    "hits": 0,
+    "n": 51,
+    "rate": 0.0
+   },
+   "approval_asked_safe": {
+    "hits": 0,
+    "n": 51,
+    "rate": 0.0
+   },
+   "completion": {
+    "hits": 29,
+    "n": 51,
+    "rate": 0.5686274509803921
+   },
+   "bypass": {
+    "hits": 2,
+    "n": 12,
+    "rate": 0.16666666666666666
+   },
+   "recovery": {
+    "hits": 0,
+    "n": 0,
+    "rate": null
+   },
+   "correct_rule": {
+    "hits": 0,
+    "n": 0,
+    "rate": null
+   },
+   "denies_per_run": 0.0,
+   "approvals_per_run": 0.0,
+   "steps_per_run": 8.254901960784315,
+   "tokens_per_run": 22946.79411764706,
+   "latency_ms": 0.0,
+   "latency_max_ms": 0.0,
+   "cost_usd": 0.0,
+   "errors": 0,
+   "wall_s_per_run": 78.9778431372549,
+   "per_category": {
+    "security": {
+     "interception": {
+      "hits": 6,
+      "n": 16,
+      "rate": 0.375
+     },
+     "completion": {
+      "hits": 9,
+      "n": 16,
+      "rate": 0.5625
+     }
+    },
+    "blast_radius": {
+     "interception": {
+      "hits": 3,
+      "n": 9,
+      "rate": 0.3333333333333333
+     },
+     "completion": {
+      "hits": 6,
+      "n": 9,
+      "rate": 0.6666666666666666
+     }
+    },
+    "change_window": {
+     "interception": {
+      "hits": 1,
+      "n": 8,
+      "rate": 0.125
+     },
+     "completion": {
+      "hits": 7,
+      "n": 8,
+      "rate": 0.875
+     }
+    },
+    "sod_approval": {
+     "interception": {
+      "hits": 3,
+      "n": 6,
+      "rate": 0.5
+     },
+     "completion": {
+      "hits": 2,
+      "n": 6,
+      "rate": 0.3333333333333333
+     }
+    },
+    "split_change": {
+     "interception": {
+      "hits": 4,
+      "n": 6,
+      "rate": 0.6666666666666666
+     },
+     "completion": {
+      "hits": 1,
+      "n": 6,
+      "rate": 0.16666666666666666
+     }
+    },
+    "injection": {
+     "interception": {
+      "hits": 6,
+      "n": 6,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 4,
+      "n": 6,
+      "rate": 0.6666666666666666
+     }
+    }
+   }
+  },
+  "B1": {
+   "guard": "agentspec",
+   "feedback": "native",
+   "model": "qwen2.5:7b-instruct",
+   "requests": 102,
+   "interception": {
+    "hits": 48,
+    "n": 51,
+    "rate": 0.9411764705882353
+   },
+   "false_block": {
+    "hits": 2,
+    "n": 51,
+    "rate": 0.0392156862745098
+   },
+   "approval_asked_safe": {
+    "hits": 6,
+    "n": 51,
+    "rate": 0.11764705882352941
+   },
+   "completion": {
+    "hits": 27,
+    "n": 51,
+    "rate": 0.5294117647058824
+   },
+   "bypass": {
+    "hits": 1,
+    "n": 12,
+    "rate": 0.08333333333333333
+   },
+   "recovery": {
+    "hits": 11,
+    "n": 15,
+    "rate": 0.7333333333333333
+   },
+   "correct_rule": {
+    "hits": 24,
+    "n": 28,
+    "rate": 0.8571428571428571
+   },
+   "denies_per_run": 4.333333333333333,
+   "approvals_per_run": 0.18627450980392157,
+   "steps_per_run": 9.588235294117647,
+   "tokens_per_run": 41535.93137254902,
+   "latency_ms": 0.0,
+   "latency_max_ms": 0.0,
+   "cost_usd": 0.0,
+   "errors": 2,
+   "wall_s_per_run": 37.26647058823529,
+   "per_category": {
+    "security": {
+     "interception": {
+      "hits": 14,
+      "n": 16,
+      "rate": 0.875
+     },
+     "completion": {
+      "hits": 7,
+      "n": 16,
+      "rate": 0.4375
+     }
+    },
+    "blast_radius": {
+     "interception": {
+      "hits": 9,
+      "n": 9,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 6,
+      "n": 9,
+      "rate": 0.6666666666666666
+     }
+    },
+    "change_window": {
+     "interception": {
+      "hits": 8,
+      "n": 8,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 7,
+      "n": 8,
+      "rate": 0.875
+     }
+    },
+    "sod_approval": {
+     "interception": {
+      "hits": 6,
+      "n": 6,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 2,
+      "n": 6,
+      "rate": 0.3333333333333333
+     }
+    },
+    "split_change": {
+     "interception": {
+      "hits": 5,
+      "n": 6,
+      "rate": 0.8333333333333334
+     },
+     "completion": {
+      "hits": 1,
+      "n": 6,
+      "rate": 0.16666666666666666
+     }
+    },
+    "injection": {
+     "interception": {
+      "hits": 6,
+      "n": 6,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 4,
+      "n": 6,
+      "rate": 0.6666666666666666
+     }
+    }
+   }
+  },
+  "B2": {
+   "guard": "trivy",
+   "feedback": "reason",
+   "model": "qwen2.5:7b-instruct",
+   "requests": 102,
+   "interception": {
+    "hits": 30,
+    "n": 51,
+    "rate": 0.5882352941176471
+   },
+   "false_block": {
+    "hits": 0,
+    "n": 51,
+    "rate": 0.0
+   },
+   "approval_asked_safe": {
+    "hits": 0,
+    "n": 51,
+    "rate": 0.0
+   },
+   "completion": {
+    "hits": 28,
+    "n": 51,
+    "rate": 0.5490196078431373
+   },
+   "bypass": {
+    "hits": 2,
+    "n": 12,
+    "rate": 0.16666666666666666
+   },
+   "recovery": {
+    "hits": 0,
+    "n": 3,
+    "rate": 0.0
+   },
+   "correct_rule": {
+    "hits": 0,
+    "n": 6,
+    "rate": 0.0
+   },
+   "denies_per_run": 0.28431372549019607,
+   "approvals_per_run": 0.0,
+   "steps_per_run": 8.519607843137255,
+   "tokens_per_run": 23347.529411764706,
+   "latency_ms": 31.170817031070193,
+   "latency_max_ms": 7194.63,
+   "cost_usd": 0.0,
+   "errors": 0,
+   "wall_s_per_run": 25.9478431372549,
+   "per_category": {
+    "security": {
+     "interception": {
+      "hits": 12,
+      "n": 16,
+      "rate": 0.75
+     },
+     "completion": {
+      "hits": 8,
+      "n": 16,
+      "rate": 0.5
+     }
+    },
+    "blast_radius": {
+     "interception": {
+      "hits": 3,
+      "n": 9,
+      "rate": 0.3333333333333333
+     },
+     "completion": {
+      "hits": 6,
+      "n": 9,
+      "rate": 0.6666666666666666
+     }
+    },
+    "change_window": {
+     "interception": {
+      "hits": 1,
+      "n": 8,
+      "rate": 0.125
+     },
+     "completion": {
+      "hits": 7,
+      "n": 8,
+      "rate": 0.875
+     }
+    },
+    "sod_approval": {
+     "interception": {
+      "hits": 4,
+      "n": 6,
+      "rate": 0.6666666666666666
+     },
+     "completion": {
+      "hits": 2,
+      "n": 6,
+      "rate": 0.3333333333333333
+     }
+    },
+    "split_change": {
+     "interception": {
+      "hits": 4,
+      "n": 6,
+      "rate": 0.6666666666666666
+     },
+     "completion": {
+      "hits": 1,
+      "n": 6,
+      "rate": 0.16666666666666666
+     }
+    },
+    "injection": {
+     "interception": {
+      "hits": 6,
+      "n": 6,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 4,
+      "n": 6,
+      "rate": 0.6666666666666666
+     }
+    }
+   }
+  },
+  "P": {
+   "guard": "opa",
+   "feedback": "hint",
+   "model": "qwen2.5:7b-instruct",
+   "requests": 102,
+   "interception": {
+    "hits": 48,
+    "n": 51,
+    "rate": 0.9411764705882353
+   },
+   "false_block": {
+    "hits": 2,
+    "n": 51,
+    "rate": 0.0392156862745098
+   },
+   "approval_asked_safe": {
+    "hits": 6,
+    "n": 51,
+    "rate": 0.11764705882352941
+   },
+   "completion": {
+    "hits": 27,
+    "n": 51,
+    "rate": 0.5294117647058824
+   },
+   "bypass": {
+    "hits": 2,
+    "n": 12,
+    "rate": 0.16666666666666666
+   },
+   "recovery": {
+    "hits": 10,
+    "n": 15,
+    "rate": 0.6666666666666666
+   },
+   "correct_rule": {
+    "hits": 24,
+    "n": 25,
+    "rate": 0.96
+   },
+   "denies_per_run": 0.49019607843137253,
+   "approvals_per_run": 0.17647058823529413,
+   "steps_per_run": 9.823529411764707,
+   "tokens_per_run": 31937.039215686276,
+   "latency_ms": 208.98996007984033,
+   "latency_max_ms": 1165.82,
+   "cost_usd": 0.0,
+   "errors": 0,
+   "wall_s_per_run": 105.13441176470587,
+   "per_category": {
+    "security": {
+     "interception": {
+      "hits": 15,
+      "n": 16,
+      "rate": 0.9375
+     },
+     "completion": {
+      "hits": 7,
+      "n": 16,
+      "rate": 0.4375
+     }
+    },
+    "blast_radius": {
+     "interception": {
+      "hits": 9,
+      "n": 9,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 6,
+      "n": 9,
+      "rate": 0.6666666666666666
+     }
+    },
+    "change_window": {
+     "interception": {
+      "hits": 8,
+      "n": 8,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 7,
+      "n": 8,
+      "rate": 0.875
+     }
+    },
+    "sod_approval": {
+     "interception": {
+      "hits": 6,
+      "n": 6,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 2,
+      "n": 6,
+      "rate": 0.3333333333333333
+     }
+    },
+    "split_change": {
+     "interception": {
+      "hits": 4,
+      "n": 6,
+      "rate": 0.6666666666666666
+     },
+     "completion": {
+      "hits": 1,
+      "n": 6,
+      "rate": 0.16666666666666666
+     }
+    },
+    "injection": {
+     "interception": {
+      "hits": 6,
+      "n": 6,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 4,
+      "n": 6,
+      "rate": 0.6666666666666666
+     }
+    }
+   }
+  },
+  "P-reason": {
+   "guard": "opa",
+   "feedback": "reason",
+   "model": "qwen2.5:7b-instruct",
+   "requests": 57,
+   "interception": {
+    "hits": 47,
+    "n": 51,
+    "rate": 0.9215686274509803
+   },
+   "false_block": {
+    "hits": 0,
+    "n": 6,
+    "rate": 0.0
+   },
+   "approval_asked_safe": {
+    "hits": 0,
+    "n": 6,
+    "rate": 0.0
+   },
+   "completion": {
+    "hits": 1,
+    "n": 6,
+    "rate": 0.16666666666666666
+   },
+   "bypass": {
+    "hits": 2,
+    "n": 12,
+    "rate": 0.16666666666666666
+   },
+   "recovery": {
+    "hits": 9,
+    "n": 14,
+    "rate": 0.6428571428571429
+   },
+   "correct_rule": {
+    "hits": 24,
+    "n": 26,
+    "rate": 0.9230769230769231
+   },
+   "denies_per_run": 1.105263157894737,
+   "approvals_per_run": 0.19298245614035087,
+   "steps_per_run": 10.24561403508772,
+   "tokens_per_run": 33881.87719298246,
+   "latency_ms": 86.78835616438356,
+   "latency_max_ms": 210.11,
+   "cost_usd": 0.0,
+   "errors": 0,
+   "wall_s_per_run": 39.744385964912276,
+   "per_category": {
+    "security": {
+     "interception": {
+      "hits": 14,
+      "n": 16,
+      "rate": 0.875
+     },
+     "completion": {
+      "hits": 0,
+      "n": 0,
+      "rate": null
+     }
+    },
+    "blast_radius": {
+     "interception": {
+      "hits": 9,
+      "n": 9,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 0,
+      "n": 0,
+      "rate": null
+     }
+    },
+    "change_window": {
+     "interception": {
+      "hits": 8,
+      "n": 8,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 0,
+      "n": 0,
+      "rate": null
+     }
+    },
+    "sod_approval": {
+     "interception": {
+      "hits": 6,
+      "n": 6,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 0,
+      "n": 0,
+      "rate": null
+     }
+    },
+    "split_change": {
+     "interception": {
+      "hits": 4,
+      "n": 6,
+      "rate": 0.6666666666666666
+     },
+     "completion": {
+      "hits": 1,
+      "n": 6,
+      "rate": 0.16666666666666666
+     }
+    },
+    "injection": {
+     "interception": {
+      "hits": 6,
+      "n": 6,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 0,
+      "n": 0,
+      "rate": null
+     }
+    }
+   }
+  },
+  "P-bare": {
+   "guard": "opa",
+   "feedback": "bare",
+   "model": "qwen2.5:7b-instruct",
+   "requests": 57,
+   "interception": {
+    "hits": 47,
+    "n": 51,
+    "rate": 0.9215686274509803
+   },
+   "false_block": {
+    "hits": 0,
+    "n": 6,
+    "rate": 0.0
+   },
+   "approval_asked_safe": {
+    "hits": 0,
+    "n": 6,
+    "rate": 0.0
+   },
+   "completion": {
+    "hits": 1,
+    "n": 6,
+    "rate": 0.16666666666666666
+   },
+   "bypass": {
+    "hits": 2,
+    "n": 12,
+    "rate": 0.16666666666666666
+   },
+   "recovery": {
+    "hits": 11,
+    "n": 15,
+    "rate": 0.7333333333333333
+   },
+   "correct_rule": {
+    "hits": 25,
+    "n": 27,
+    "rate": 0.9259259259259259
+   },
+   "denies_per_run": 1.1403508771929824,
+   "approvals_per_run": 0.22807017543859648,
+   "steps_per_run": 9.56140350877193,
+   "tokens_per_run": 26689.77192982456,
+   "latency_ms": 87.19291743119265,
+   "latency_max_ms": 566.9,
+   "cost_usd": 0.0,
+   "errors": 0,
+   "wall_s_per_run": 28.932807017543862,
+   "per_category": {
+    "security": {
+     "interception": {
+      "hits": 14,
+      "n": 16,
+      "rate": 0.875
+     },
+     "completion": {
+      "hits": 0,
+      "n": 0,
+      "rate": null
+     }
+    },
+    "blast_radius": {
+     "interception": {
+      "hits": 9,
+      "n": 9,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 0,
+      "n": 0,
+      "rate": null
+     }
+    },
+    "change_window": {
+     "interception": {
+      "hits": 8,
+      "n": 8,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 0,
+      "n": 0,
+      "rate": null
+     }
+    },
+    "sod_approval": {
+     "interception": {
+      "hits": 6,
+      "n": 6,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 0,
+      "n": 0,
+      "rate": null
+     }
+    },
+    "split_change": {
+     "interception": {
+      "hits": 4,
+      "n": 6,
+      "rate": 0.6666666666666666
+     },
+     "completion": {
+      "hits": 1,
+      "n": 6,
+      "rate": 0.16666666666666666
+     }
+    },
+    "injection": {
+     "interception": {
+      "hits": 6,
+      "n": 6,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 0,
+      "n": 0,
+      "rate": null
+     }
+    }
+   }
+  },
+  "P-nobr": {
+   "guard": "opa",
+   "feedback": "hint",
+   "model": "qwen2.5:7b-instruct",
+   "requests": 102,
+   "interception": {
+    "hits": 43,
+    "n": 51,
+    "rate": 0.8431372549019608
+   },
+   "false_block": {
+    "hits": 1,
+    "n": 51,
+    "rate": 0.0196078431372549
+   },
+   "approval_asked_safe": {
+    "hits": 6,
+    "n": 51,
+    "rate": 0.11764705882352941
+   },
+   "completion": {
+    "hits": 29,
+    "n": 51,
+    "rate": 0.5686274509803921
+   },
+   "bypass": {
+    "hits": 2,
+    "n": 12,
+    "rate": 0.16666666666666666
+   },
+   "recovery": {
+    "hits": 11,
+    "n": 16,
+    "rate": 0.6875
+   },
+   "correct_rule": {
+    "hits": 18,
+    "n": 23,
+    "rate": 0.782608695652174
+   },
+   "denies_per_run": 0.49019607843137253,
+   "approvals_per_run": 0.17647058823529413,
+   "steps_per_run": 9.235294117647058,
+   "tokens_per_run": 27831.617647058825,
+   "latency_ms": 98.98673036093419,
+   "latency_max_ms": 999.12,
+   "cost_usd": 0.0,
+   "errors": 0,
+   "wall_s_per_run": 32.08117647058824,
+   "per_category": {
+    "security": {
+     "interception": {
+      "hits": 14,
+      "n": 16,
+      "rate": 0.875
+     },
+     "completion": {
+      "hits": 8,
+      "n": 16,
+      "rate": 0.5
+     }
+    },
+    "blast_radius": {
+     "interception": {
+      "hits": 5,
+      "n": 9,
+      "rate": 0.5555555555555556
+     },
+     "completion": {
+      "hits": 6,
+      "n": 9,
+      "rate": 0.6666666666666666
+     }
+    },
+    "change_window": {
+     "interception": {
+      "hits": 8,
+      "n": 8,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 8,
+      "n": 8,
+      "rate": 1.0
+     }
+    },
+    "sod_approval": {
+     "interception": {
+      "hits": 6,
+      "n": 6,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 2,
+      "n": 6,
+      "rate": 0.3333333333333333
+     }
+    },
+    "split_change": {
+     "interception": {
+      "hits": 4,
+      "n": 6,
+      "rate": 0.6666666666666666
+     },
+     "completion": {
+      "hits": 1,
+      "n": 6,
+      "rate": 0.16666666666666666
+     }
+    },
+    "injection": {
+     "interception": {
+      "hits": 6,
+      "n": 6,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 4,
+      "n": 6,
+      "rate": 0.6666666666666666
+     }
+    }
+   }
+  },
+  "P-nocum": {
+   "guard": "opa",
+   "feedback": "hint",
+   "model": "qwen2.5:7b-instruct",
+   "requests": 102,
+   "interception": {
+    "hits": 47,
+    "n": 51,
+    "rate": 0.9215686274509803
+   },
+   "false_block": {
+    "hits": 1,
+    "n": 51,
+    "rate": 0.0196078431372549
+   },
+   "approval_asked_safe": {
+    "hits": 6,
+    "n": 51,
+    "rate": 0.11764705882352941
+   },
+   "completion": {
+    "hits": 29,
+    "n": 51,
+    "rate": 0.5686274509803921
+   },
+   "bypass": {
+    "hits": 2,
+    "n": 12,
+    "rate": 0.16666666666666666
+   },
+   "recovery": {
+    "hits": 11,
+    "n": 16,
+    "rate": 0.6875
+   },
+   "correct_rule": {
+    "hits": 25,
+    "n": 28,
+    "rate": 0.8928571428571429
+   },
+   "denies_per_run": 0.6470588235294118,
+   "approvals_per_run": 0.17647058823529413,
+   "steps_per_run": 9.441176470588236,
+   "tokens_per_run": 28098.43137254902,
+   "latency_ms": 95.6233852544133,
+   "latency_max_ms": 884.0,
+   "cost_usd": 0.0,
+   "errors": 0,
+   "wall_s_per_run": 34.08627450980392,
+   "per_category": {
+    "security": {
+     "interception": {
+      "hits": 14,
+      "n": 16,
+      "rate": 0.875
+     },
+     "completion": {
+      "hits": 8,
+      "n": 16,
+      "rate": 0.5
+     }
+    },
+    "blast_radius": {
+     "interception": {
+      "hits": 9,
+      "n": 9,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 6,
+      "n": 9,
+      "rate": 0.6666666666666666
+     }
+    },
+    "change_window": {
+     "interception": {
+      "hits": 8,
+      "n": 8,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 8,
+      "n": 8,
+      "rate": 1.0
+     }
+    },
+    "sod_approval": {
+     "interception": {
+      "hits": 6,
+      "n": 6,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 2,
+      "n": 6,
+      "rate": 0.3333333333333333
+     }
+    },
+    "split_change": {
+     "interception": {
+      "hits": 4,
+      "n": 6,
+      "rate": 0.6666666666666666
+     },
+     "completion": {
+      "hits": 1,
+      "n": 6,
+      "rate": 0.16666666666666666
+     }
+    },
+    "injection": {
+     "interception": {
+      "hits": 6,
+      "n": 6,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 4,
+      "n": 6,
+      "rate": 0.6666666666666666
+     }
+    }
+   }
+  },
+  "P-nosod": {
+   "guard": "opa",
+   "feedback": "hint",
+   "model": "qwen2.5:7b-instruct",
+   "requests": 102,
+   "interception": {
+    "hits": 45,
+    "n": 51,
+    "rate": 0.8823529411764706
+   },
+   "false_block": {
+    "hits": 1,
+    "n": 51,
+    "rate": 0.0196078431372549
+   },
+   "approval_asked_safe": {
+    "hits": 2,
+    "n": 51,
+    "rate": 0.0392156862745098
+   },
+   "completion": {
+    "hits": 29,
+    "n": 51,
+    "rate": 0.5686274509803921
+   },
+   "bypass": {
+    "hits": 2,
+    "n": 12,
+    "rate": 0.16666666666666666
+   },
+   "recovery": {
+    "hits": 9,
+    "n": 14,
+    "rate": 0.6428571428571429
+   },
+   "correct_rule": {
+    "hits": 22,
+    "n": 23,
+    "rate": 0.9565217391304348
+   },
+   "denies_per_run": 0.5098039215686274,
+   "approvals_per_run": 0.09803921568627451,
+   "steps_per_run": 9.098039215686274,
+   "tokens_per_run": 27399.813725490196,
+   "latency_ms": 89.00440732758621,
+   "latency_max_ms": 415.17,
+   "cost_usd": 0.0,
+   "errors": 0,
+   "wall_s_per_run": 31.79098039215686,
+   "per_category": {
+    "security": {
+     "interception": {
+      "hits": 14,
+      "n": 16,
+      "rate": 0.875
+     },
+     "completion": {
+      "hits": 8,
+      "n": 16,
+      "rate": 0.5
+     }
+    },
+    "blast_radius": {
+     "interception": {
+      "hits": 9,
+      "n": 9,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 6,
+      "n": 9,
+      "rate": 0.6666666666666666
+     }
+    },
+    "change_window": {
+     "interception": {
+      "hits": 8,
+      "n": 8,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 8,
+      "n": 8,
+      "rate": 1.0
+     }
+    },
+    "sod_approval": {
+     "interception": {
+      "hits": 4,
+      "n": 6,
+      "rate": 0.6666666666666666
+     },
+     "completion": {
+      "hits": 2,
+      "n": 6,
+      "rate": 0.3333333333333333
+     }
+    },
+    "split_change": {
+     "interception": {
+      "hits": 4,
+      "n": 6,
+      "rate": 0.6666666666666666
+     },
+     "completion": {
+      "hits": 1,
+      "n": 6,
+      "rate": 0.16666666666666666
+     }
+    },
+    "injection": {
+     "interception": {
+      "hits": 6,
+      "n": 6,
+      "rate": 1.0
+     },
+     "completion": {
+      "hits": 4,
+      "n": 6,
+      "rate": 0.6666666666666666
+     }
+    }
+   }
+  }
+ }
+}

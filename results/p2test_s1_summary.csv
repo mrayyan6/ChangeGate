@@ -1,0 +1,10 @@
+arm,guard,feedback,model,requests,interception_hits,interception_n,interception_rate,bypass_hits,bypass_n,bypass_rate,false_block_hits,false_block_n,false_block_rate,approval_asked_safe_hits,approval_asked_safe_n,approval_asked_safe_rate,completion_hits,completion_n,completion_rate,recovery_hits,recovery_n,recovery_rate,correct_rule_hits,correct_rule_n,correct_rule_rate,denies_per_run,approvals_per_run,steps_per_run,tokens_per_run,latency_ms,latency_max_ms,cost_usd,errors,wall_s_per_run
+B0,none,none,qwen2.5:7b-instruct,102,27,51,0.5294,1,12,0.0833,0,51,0.0,0,51,0.0,30,51,0.5882,0,0,,0,0,,0.0,0.0,8.451,24668.8039,0.0,0.0,0.0,0,44.8216
+B1,agentspec,native,qwen2.5:7b-instruct,102,48,51,0.9412,1,12,0.0833,0,51,0.0,4,51,0.0784,25,51,0.4902,11,17,0.6471,26,30,0.8667,5.5,0.1569,10.5882,54657.0686,0.0,0.0,0.0,0,48.9335
+B2,trivy,reason,qwen2.5:7b-instruct,102,26,51,0.5098,2,12,0.1667,0,51,0.0,0,51,0.0,25,51,0.4902,0,3,0.0,0,7,0.0,0.2843,0.0,9.3725,28689.6373,138.54,11462.09,0.0,0,48.2555
+P,opa,hint,qwen2.5:7b-instruct,102,48,51,0.9412,1,12,0.0833,2,51,0.0392,8,51,0.1569,28,51,0.549,11,16,0.6875,24,26,0.9231,0.4902,0.1961,10.0196,33670.902,168.2951,583.2,0.0,0,49.6425
+P-reason,opa,reason,qwen2.5:7b-instruct,57,47,51,0.9216,2,12,0.1667,0,6,0.0,0,6,0.0,2,6,0.3333,11,17,0.6471,25,28,0.8929,1.0877,0.2105,11.193,36787.4211,102.4466,651.99,0.0,0,44.3175
+P-bare,opa,bare,qwen2.5:7b-instruct,57,49,51,0.9608,0,12,0.0,0,6,0.0,0,6,0.0,1,6,0.1667,11,16,0.6875,26,28,0.9286,1.0526,0.2281,11.0877,35185.3158,116.1359,763.06,0.0,0,42.7416
+P-nobr,opa,hint,qwen2.5:7b-instruct,101,43,50,0.86,1,12,0.0833,1,51,0.0196,8,51,0.1569,30,51,0.5882,11,16,0.6875,18,22,0.8182,0.3465,0.198,9.4356,28487.9505,90.8165,680.22,0.0,0,32.4024
+P-nocum,opa,hint,qwen2.5:7b-instruct,101,47,50,0.94,1,12,0.0833,2,51,0.0392,8,51,0.1569,28,51,0.549,12,17,0.7059,24,27,0.8889,0.6238,0.198,10.3861,34069.4356,103.4488,1124.38,0.0,0,42.6069
+P-nosod,opa,hint,qwen2.5:7b-instruct,101,46,50,0.92,1,12,0.0833,1,51,0.0196,2,51,0.0392,30,51,0.5882,10,15,0.6667,22,23,0.9565,0.5545,0.099,9.9109,31911.9901,77.8532,197.62,0.0,0,35.6204
