@@ -100,7 +100,9 @@ class SpecFinish(AgentFinish):
 
     @property
     def input(self) -> Any:
-        return None
+        # AgentSpec's self reflection hands our plan() result straight back to validate_and_enforce, so this object
+        # also needs an empty string, not None (found 6 Nov on SEC-ACL-02-U and SEC-PAB-01-U of seed 2).
+        return ""
 
     def is_finish(self) -> bool:
         return True
@@ -168,10 +170,61 @@ def _inspection_answer(prompt: str = "") -> str:
     return "yes" if approval.granted else "no"
 
 
+_FINISH_PATCHED = False
+
+
+def _patch_finish_action() -> None:
+    """Give AgentSpec's wrapper of a final answer an empty string input instead of None (fix of 6 Nov 2026).
+
+    AgentSpec's own Action.from_langchain builds Action(name="finish", input=None) for every AgentFinish, and its
+    Rule.triggered then calls input.strip() on that None for every rule whose event is not "finish", which crashed
+    18 of 102 requests per seed (the ones where the model ends its turn in plain text). The patch is applied at run
+    time from our code; the AgentSpec checkout in external/ is not edited. See details/FAILURE_INVESTIGATION.md.
+    """
+    global _FINISH_PATCHED
+    if _FINISH_PATCHED:
+        return
+    import langchain_core.agents as lc_agents
+    from agent import Action
+
+    original = Action.from_langchain
+
+    def from_langchain(action):
+        wrapped = original(action)
+        if isinstance(action, lc_agents.AgentFinish) and wrapped.input is None:
+            wrapped.input = ""
+        return wrapped
+
+    Action.from_langchain = staticmethod(from_langchain)
+
+    # AgentSpec's self reflection and stop enforcement build their own finish and skip actions with input=None and
+    # run them through validate_and_enforce again (found on 6 Nov, SEC-ACL-02-U and SEC-PAB-01-U of seed 2).
+    original_finish = Action.get_finish
+    original_skip = Action.get_skip
+
+    def get_finish(output, log):
+        wrapped = original_finish(output, log)
+        if wrapped.input is None:
+            wrapped.input = ""
+        return wrapped
+
+    def get_skip():
+        wrapped = original_skip()
+        if wrapped.input is None:
+            wrapped.input = ""
+        return wrapped
+
+    Action.get_finish = staticmethod(get_finish)
+    Action.get_skip = staticmethod(get_skip)
+    _FINISH_PATCHED = True
+
+
 def run_agentspec_agent(ctx: RunContext, llm, pep, max_steps: int, callbacks: list | None = None) -> AgentOutcome:
     ensure_importable()
     from controlled_agent_excector import ControlledAgentExecutor
     from rules.manual import table
+
+    _patch_finish_action()
 
     for control in CONTROLS:
         table.predicate_table[control.predicate] = make_predicate(control)

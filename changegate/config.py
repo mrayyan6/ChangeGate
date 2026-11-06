@@ -40,6 +40,7 @@ class OllamaConfig(_Section):
     model: str = "llama3.1:8b"
     base_url: str = "http://localhost:11434"
     num_ctx: int = 16384
+    num_predict: int | None = None  # reply length cap in tokens; None = no cap (all main runs). Used only by the runaway test.
 
 
 class GeminiConfig(_Section):

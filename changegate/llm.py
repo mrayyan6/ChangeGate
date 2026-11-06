@@ -167,6 +167,7 @@ def build_chat_model(cfg: Config) -> BaseChatModel:
             temperature=cfg.llm.temperature,
             seed=cfg.run.seed,
             num_ctx=cfg.llm.ollama.num_ctx,
+            **({"num_predict": cfg.llm.ollama.num_predict} if cfg.llm.ollama.num_predict else {}),
             keep_alive="30m",
             client_kwargs={"timeout": cfg.llm.request_timeout_s},
         )
