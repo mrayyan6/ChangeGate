@@ -75,7 +75,7 @@ Design details are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md); the build pl
 4. Pick the LLM. The default is a local model through Ollama:
 
    ```powershell
-   ollama pull llama3.1:8b
+   ollama pull qwen2.5:7b-instruct
    ```
 
    For Gemini, copy `.env.example` to `.env` and set `GEMINI_API_KEY`. Model names live in
